@@ -14,7 +14,7 @@ out
 
 # Ignore all JPG files except those in src/renderer/src/assets/qsl/
 *.jpg
-!src/renderer/src/assets/qsl/*.jpg
+qsl
 
 # Other directories
 basic
