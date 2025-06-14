@@ -1,13 +1,27 @@
+// Import all QSL card images
+import LU2WA from '@renderer/assets/qsl/LU2WA.jpg'
+import Sarmiento2022 from '@renderer/assets/qsl/Sarmiento-2022.jpg'
+import Malvinas2022 from '@renderer/assets/qsl/Malvinas-2022.jpg'
+import FaroNovales2023 from '@renderer/assets/qsl/Faro-Novales-2023.jpg'
+import Malvinas2023 from '@renderer/assets/qsl/Malvinas-2023.jpg'
+import CaboBlanco2020 from '@renderer/assets/qsl/Cabo-Blanco-2020.jpg'
+import CaboBlanco2024 from '@renderer/assets/qsl/Cabo-Blanco-2024.jpg'
+import NocheEstrellas2024 from '@renderer/assets/qsl/Noche-De-Estrellas-2024.jpg'
+import Malvinas2024 from '@renderer/assets/qsl/Malvinas-2024.jpg'
+
 const QSL_TEMPLATES = [
-  { value: 'assets/LU2WA.jpg', label: 'LU2WA' },
-  { value: 'assets/Sarmiento-2022.jpg', label: 'Sarmiento 2022' },
-  { value: 'assets/Malvinas-2022.jpg', label: 'Malvinas 2022' },
-  { value: 'assets/Faro-Novales-2023.jpg', label: 'Faro Novales 2023' },
-  { value: 'assets/Malvinas-2023.jpg', label: 'Malvinas 2023' },
-  { value: 'assets/Cabo-Blanco-2020.jpg', label: 'Cabo Blanco 2020' },
-  { value: 'assets/Cabo-Blanco-2024.jpg', label: 'Cabo Blanco 2024' },
-  { value: 'assets/Noche-De-Estrellas-2024.jpg', label: 'Noche de Estrellas 2024' },
-  { value: 'assets/Malvinas-2024.jpg', label: 'Malvinas 2024' }
+  { value: LU2WA, label: 'LU2WA' },
+  { value: Sarmiento2022, label: 'Sarmiento 2022' },
+  { value: Malvinas2022, label: 'Malvinas 2022' },
+  { value: FaroNovales2023, label: 'Faro Novales 2023' },
+  { value: Malvinas2023, label: 'Malvinas 2023' },
+  { value: CaboBlanco2020, label: 'Cabo Blanco 2020' },
+  { value: CaboBlanco2024, label: 'Cabo Blanco 2024' },
+  {
+    value: NocheEstrellas2024,
+    label: 'Noche de Estrellas 2024'
+  },
+  { value: Malvinas2024, label: 'Malvinas 2024' }
 ]
 
 const QSLCardSelector = ({ qslTemplate, onTemplateChange }) => {

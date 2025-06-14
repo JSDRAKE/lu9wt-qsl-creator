@@ -5,8 +5,16 @@ out
 .eslintcache
 *.log*
 
+# Environment
 .env
+
+# Document files
 .txt
 .pdf
 
+# Ignore all JPG files except those in src/renderer/src/assets/qsl/
+*.jpg
+!src/renderer/src/assets/qsl/*.jpg
+
+# Other directories
 basic
