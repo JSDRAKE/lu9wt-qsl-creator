@@ -1,13 +1,13 @@
 // Import all QSL card images
-import LU2WA from '@renderer/assets/qsl/LU2WA.jpg'
-import Sarmiento2022 from '@renderer/assets/qsl/Sarmiento-2022.jpg'
-import Malvinas2022 from '@renderer/assets/qsl/Malvinas-2022.jpg'
-import FaroNovales2023 from '@renderer/assets/qsl/Faro-Novales-2023.jpg'
-import Malvinas2023 from '@renderer/assets/qsl/Malvinas-2023.jpg'
-import CaboBlanco2020 from '@renderer/assets/qsl/Cabo-Blanco-2020.jpg'
-import CaboBlanco2024 from '@renderer/assets/qsl/Cabo-Blanco-2024.jpg'
-import NocheEstrellas2024 from '@renderer/assets/qsl/Noche-De-Estrellas-2024.jpg'
-import Malvinas2024 from '@renderer/assets/qsl/Malvinas-2024.jpg'
+import CaboBlanco2020 from '../assets/qsl/Cabo-Blanco-2020.jpg'
+import CaboBlanco2024 from '../assets/qsl/Cabo-Blanco-2024.jpg'
+import FaroNovales2023 from '../assets/qsl/Faro-Novales-2023.jpg'
+import LU2WA from '../assets/qsl/LU2WA.jpg'
+import Malvinas2022 from '../assets/qsl/Malvinas-2022.jpg'
+import Malvinas2023 from '../assets/qsl/Malvinas-2023.jpg'
+import Malvinas2024 from '../assets/qsl/Malvinas-2024.jpg'
+import NocheEstrellas2024 from '../assets/qsl/Noche-De-Estrellas-2024.jpg'
+import Sarmiento2022 from '../assets/qsl/Sarmiento-2022.jpg'
 
 const QSL_TEMPLATES = [
   { value: LU2WA, label: 'LU2WA' },

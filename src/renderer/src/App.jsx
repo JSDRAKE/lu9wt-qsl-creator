@@ -6,8 +6,14 @@ import QSLManager from './components/QSLManager'
 import { useQSLForm } from './hooks/useQSLForm'
 
 function App() {
-  const { formData, generatedQSL, handleInputChange, handleTemplateChange, generateQSL } =
-    useQSLForm()
+  const {
+    formData,
+    generatedQSL,
+    handleInputChange,
+    handleTemplateChange,
+    generateQSL,
+    resetForm
+  } = useQSLForm()
 
   const handleEmailSubmit = useCallback((email) => {
     console.log('Enviando QSL a:', email)
@@ -18,7 +24,12 @@ function App() {
     <div className="container">
       <Header />
       <div className="content">
-        <QSLForm formData={formData} onInputChange={handleInputChange} onGenerate={generateQSL} />
+        <QSLForm
+          formData={formData}
+          onInputChange={handleInputChange}
+          onGenerate={generateQSL}
+          onReset={resetForm}
+        />
 
         <QSLCardSelector
           qslTemplate={formData.qslTemplate}
