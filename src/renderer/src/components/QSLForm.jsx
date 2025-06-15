@@ -322,6 +322,12 @@ const QSLForm = ({ onGenerate, onInputChange, formData, onReset }) => {
             name="mode"
             value={formData.mode}
             onChange={handleInputChange}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && formData.mode) {
+                e.preventDefault()
+                handleSubmit(e)
+              }
+            }}
             className={errors.mode ? 'error' : ''}
             required
           >
