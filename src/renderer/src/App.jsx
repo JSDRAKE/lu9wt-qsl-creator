@@ -1,4 +1,5 @@
-import { useCallback } from 'react'
+import { useCallback, useEffect, useState } from 'react'
+import AboutDialog from './components/AboutDialog'
 import Header from './components/Header'
 import QSLCardSelector from './components/QSLCardSelector'
 import QSLForm from './components/QSLForm'
@@ -6,6 +7,9 @@ import QSLManager from './components/QSLManager'
 import { useQSLForm } from './hooks/useQSLForm'
 
 function App() {
+  const [showAbout, setShowAbout] = useState(false)
+  const [appInfo, setAppInfo] = useState(null)
+
   const {
     formData,
     generatedQSL,
@@ -15,6 +19,42 @@ function App() {
     resetForm,
     errors
   } = useQSLForm()
+
+  // Manejar el evento de mostrar el diálogo Acerca de
+  useEffect(() => {
+    const handleShowAbout = async () => {
+      try {
+        if (window.electron && window.electron.ipcRenderer) {
+          const info = await window.electron.ipcRenderer.invoke('get-app-info')
+          setAppInfo(info)
+        }
+        setShowAbout(true)
+      } catch (error) {
+        console.error('Error al obtener información de la aplicación:', error)
+        setShowAbout(true) // Mostrar con información por defecto
+      }
+    }
+
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape' && showAbout) {
+        setShowAbout(false)
+      }
+    }
+
+    // Escuchar el evento del menú
+    const removeShowAboutListener = window.electron?.ipcRenderer?.on(
+      'show-about-dialog',
+      handleShowAbout
+    )
+
+    // Escuchar tecla ESC
+    window.addEventListener('keydown', handleKeyDown)
+
+    return () => {
+      removeShowAboutListener?.()
+      window.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [showAbout])
 
   const handleEmailSubmit = useCallback((email) => {
     console.log('Enviando QSL a:', email)
@@ -62,6 +102,8 @@ function App() {
         onSendEmail={handleEmailSubmit}
         onDownload={handleDownloadQSL}
       />
+
+      <AboutDialog isOpen={showAbout} onClose={() => setShowAbout(false)} appInfo={appInfo} />
     </div>
   )
 }
