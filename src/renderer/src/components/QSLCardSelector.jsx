@@ -1,32 +1,32 @@
-// Import all QSL card images
-import CaboBlanco2020 from '../assets/qsl/Cabo-Blanco-2020.jpg'
-import CaboBlanco2024 from '../assets/qsl/Cabo-Blanco-2024.jpg'
-import FaroNovales2023 from '../assets/qsl/Faro-Novales-2023.jpg'
-import LU2WA from '../assets/qsl/LU2WA.jpg'
-import Malvinas2022 from '../assets/qsl/Malvinas-2022.jpg'
-import Malvinas2023 from '../assets/qsl/Malvinas-2023.jpg'
-import Malvinas2024 from '../assets/qsl/Malvinas-2024.jpg'
-import NocheEstrellas2024 from '../assets/qsl/Noche-De-Estrellas-2024.jpg'
-import Sarmiento2022 from '../assets/qsl/Sarmiento-2022.jpg'
-
-const QSL_TEMPLATES = [
-  { value: LU2WA, label: 'LU2WA' },
-  { value: Sarmiento2022, label: 'Sarmiento 2022' },
-  { value: Malvinas2022, label: 'Malvinas 2022' },
-  { value: FaroNovales2023, label: 'Faro Novales 2023' },
-  { value: Malvinas2023, label: 'Malvinas 2023' },
-  { value: CaboBlanco2020, label: 'Cabo Blanco 2020' },
-  { value: CaboBlanco2024, label: 'Cabo Blanco 2024' },
-  {
-    value: NocheEstrellas2024,
-    label: 'Noche de Estrellas 2024'
-  },
-  { value: Malvinas2024, label: 'Malvinas 2024' }
-]
-
 import PropTypes from 'prop-types'
+import { useMemo } from 'react'
+import templatesData from '../data/qslTemplates.json'
+
+// Import all QSL card images
+const imageImports = import.meta.glob('../assets/qsl/*.jpg', { eager: true })
+const images = {}
+
+// Process image imports
+Object.entries(imageImports).forEach(([path, module]) => {
+  const imageName = path.split('/').pop().replace('.jpg', '')
+  images[imageName] = module.default
+})
+
+// Process templates data with their corresponding images
+const processTemplates = (templates, imagesMap) =>
+  templates.map((template) => ({
+    ...template,
+    image: imagesMap[template.value]
+  }))
 
 const QSLCardSelector = ({ qslTemplate, onTemplateChange, error }) => {
+  const templates = useMemo(() => processTemplates(templatesData, images), [])
+
+  const selectedTemplate = useMemo(() => {
+    if (!qslTemplate) return null
+    const templateName = qslTemplate.split('/').pop().replace('.jpg', '')
+    return templates.find((t) => t.value === templateName)
+  }, [qslTemplate, templates])
   return (
     <div className="qsl-card-selector">
       <h2>Selección de QSL</h2>
@@ -34,21 +34,31 @@ const QSLCardSelector = ({ qslTemplate, onTemplateChange, error }) => {
 
       <div className="template-selector">
         <select
-          value={qslTemplate}
-          onChange={(e) => onTemplateChange(e.target.value)}
+          value={qslTemplate || ''}
+          onChange={(e) => {
+            const selectedValue = e.target.value
+            const template = templates.find((t) => t.id === selectedValue)
+            onTemplateChange(template ? template.image : '')
+          }}
           className="template-select"
+          aria-label="Seleccionar plantilla QSL"
+          aria-invalid={!!error}
         >
           <option value="">Elige una QSL</option>
-          {QSL_TEMPLATES.map((template) => (
-            <option key={template.value} value={template.value}>
+          {templates.map((template) => (
+            <option key={template.id} value={template.id}>
               {template.label}
             </option>
           ))}
         </select>
 
-        {qslTemplate && (
+        {selectedTemplate && (
           <div className="template-preview">
-            <img src={qslTemplate} alt="Selected QSL Card" className="template-image" />
+            <img
+              src={selectedTemplate.image}
+              alt={`Plantilla seleccionada: ${selectedTemplate.label}`}
+              className="template-image"
+            />
           </div>
         )}
         {error && <div className="error-message">{error}</div>}
