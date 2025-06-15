@@ -85,7 +85,7 @@ const QSLForm = ({ onGenerate, onInputChange, formData, onReset }) => {
     if (!freqRegex.test(value)) return false
     const numValue = parseFloat(value.replace(/,/g, ''))
     if (Number.isNaN(numValue)) return false
-    return numValue >= 1.0 && numValue <= 1000.0
+    return numValue >= 1.0 && numValue <= 900000.0
   }
 
   const validateRST = (value) => {
@@ -185,10 +185,22 @@ const QSLForm = ({ onGenerate, onInputChange, formData, onReset }) => {
       hasErrors = true
     }
 
-    setErrors(newErrors)
+    // Set the errors first
+    setErrors({
+      ...newErrors,
+      ...(hasErrors ? {} : { qslTemplate: '' }) // Clear template error if no other errors
+    })
 
+    // Only proceed with generation if there are no errors
     if (!hasErrors) {
-      onGenerate(formData)
+      const success = onGenerate(formData)
+      if (!success) {
+        // If generation failed (no template selected), show the error
+        setErrors((prev) => ({
+          ...prev,
+          qslTemplate: 'Por favor seleccione una plantilla QSL antes de generar'
+        }))
+      }
     }
   }
 

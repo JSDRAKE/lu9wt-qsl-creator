@@ -12,7 +12,8 @@ function App() {
     handleInputChange,
     handleTemplateChange,
     generateQSL,
-    resetForm
+    resetForm,
+    errors
   } = useQSLForm()
 
   const handleEmailSubmit = useCallback((email) => {
@@ -34,6 +35,7 @@ function App() {
         <QSLCardSelector
           qslTemplate={formData.qslTemplate}
           onTemplateChange={handleTemplateChange}
+          error={errors?.qslTemplate}
         />
       </div>
 

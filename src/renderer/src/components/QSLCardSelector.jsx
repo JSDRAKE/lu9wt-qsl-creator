@@ -24,11 +24,13 @@ const QSL_TEMPLATES = [
   { value: Malvinas2024, label: 'Malvinas 2024' }
 ]
 
-const QSLCardSelector = ({ qslTemplate, onTemplateChange }) => {
+import PropTypes from 'prop-types'
+
+const QSLCardSelector = ({ qslTemplate, onTemplateChange, error }) => {
   return (
     <div className="qsl-card-selector">
-      <h2>Select QSL Card</h2>
-      <p>Choose a QSL card template:</p>
+      <h2>Selección de QSL</h2>
+      <p>Selecciona una plantilla QSL:</p>
 
       <div className="template-selector">
         <select
@@ -36,7 +38,7 @@ const QSLCardSelector = ({ qslTemplate, onTemplateChange }) => {
           onChange={(e) => onTemplateChange(e.target.value)}
           className="template-select"
         >
-          <option value="">Select a QSL Card</option>
+          <option value="">Elige una QSL</option>
           {QSL_TEMPLATES.map((template) => (
             <option key={template.value} value={template.value}>
               {template.label}
@@ -49,9 +51,16 @@ const QSLCardSelector = ({ qslTemplate, onTemplateChange }) => {
             <img src={qslTemplate} alt="Selected QSL Card" className="template-image" />
           </div>
         )}
+        {error && <div className="error-message">{error}</div>}
       </div>
     </div>
   )
+}
+
+QSLCardSelector.propTypes = {
+  qslTemplate: PropTypes.string,
+  onTemplateChange: PropTypes.func.isRequired,
+  error: PropTypes.string
 }
 
 export default QSLCardSelector
