@@ -236,7 +236,7 @@ const QSLForm = ({ onGenerate, onInputChange, formData, onReset }) => {
               maxLength="15"
               onInput={(e) => {
                 // Only allow uppercase letters, numbers and forward slash
-                e.target.value = e.target.value.replace(/[^A-Z0-9/]/gi, '').toUpperCase();
+                e.target.value = e.target.value.replace(/[^A-Z0-9/]/gi, '').toUpperCase()
               }}
               required
             />
