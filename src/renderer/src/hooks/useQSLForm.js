@@ -1,4 +1,6 @@
 import { useCallback, useState } from 'react'
+// Import QSL generation function
+import { generateQSL as generateQSLImage } from '../utils/generateQSL'
 
 export const INITIAL_FORM_STATE = {
   callsign: '',
@@ -25,24 +27,47 @@ export const useQSLForm = (initialState = INITIAL_FORM_STATE) => {
   }, [])
 
   const generateQSL = useCallback(
-    (formDataToValidate = formData) => {
+    async (formDataToValidate = formData) => {
       const newErrors = {}
 
+      // Validate required fields
       if (!formDataToValidate.qslTemplate) {
         newErrors.qslTemplate = 'Por favor seleccione una plantilla QSL antes de generar'
       }
+      if (!formDataToValidate.callsign) newErrors.callsign = 'El indicativo es requerido'
+      if (!formDataToValidate.date) newErrors.date = 'La fecha es requerida'
+      if (!formDataToValidate.time) newErrors.time = 'La hora es requerida'
+      if (!formDataToValidate.frequency) newErrors.frequency = 'La frecuencia es requerida'
+      if (!formDataToValidate.report) newErrors.report = 'El reporte es requerido'
+      if (!formDataToValidate.mode) newErrors.mode = 'El modo es requerido'
 
       setErrors(newErrors)
 
-      if (Object.keys(newErrors).length === 0) {
-        setGeneratedQSL({
-          ...formDataToValidate,
-          imageUrl: formDataToValidate.qslTemplate
-        })
-        return true
+      if (Object.keys(newErrors).length > 0) {
+        return false
       }
 
-      return false
+      try {
+        // Generar la imagen QSL
+        const imageUrl = await generateQSLImage(formDataToValidate.qslTemplate, formDataToValidate)
+
+        if (!imageUrl) {
+          throw new Error('Error al generar la imagen QSL')
+        }
+
+        setGeneratedQSL({
+          ...formDataToValidate,
+          imageUrl
+        })
+        return true
+      } catch (error) {
+        console.error('Error al generar QSL:', error)
+        setErrors((prev) => ({
+          ...prev,
+          general: 'Error al generar la QSL. Por favor, intente nuevamente.'
+        }))
+        return false
+      }
     },
     [formData]
   )
