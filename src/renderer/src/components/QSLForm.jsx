@@ -231,9 +231,13 @@ const QSLForm = ({ onGenerate, onInputChange, formData, onReset }) => {
               value={formData.callsign}
               onChange={handleInputChange}
               placeholder="Ej: LU0ABC"
-              pattern="^[A-Z0-9/]{1,15}$"
               title="Máximo 15 caracteres. Solo letras mayúsculas, números y /"
               className={errors.callsign ? 'error' : ''}
+              maxLength="15"
+              onInput={(e) => {
+                // Only allow uppercase letters, numbers and forward slash
+                e.target.value = e.target.value.replace(/[^A-Z0-9/]/gi, '').toUpperCase();
+              }}
               required
             />
           </label>
