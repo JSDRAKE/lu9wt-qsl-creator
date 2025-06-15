@@ -32,14 +32,14 @@ export const useQSLForm = (initialState = INITIAL_FORM_STATE) => {
 
       // Validate required fields
       if (!formDataToValidate.qslTemplate) {
-        newErrors.qslTemplate = 'Por favor seleccione una plantilla QSL antes de generar'
+        newErrors.qslTemplate = 'Please select a QSL template before generating'
       }
-      if (!formDataToValidate.callsign) newErrors.callsign = 'El indicativo es requerido'
-      if (!formDataToValidate.date) newErrors.date = 'La fecha es requerida'
-      if (!formDataToValidate.time) newErrors.time = 'La hora es requerida'
-      if (!formDataToValidate.frequency) newErrors.frequency = 'La frecuencia es requerida'
-      if (!formDataToValidate.report) newErrors.report = 'El reporte es requerido'
-      if (!formDataToValidate.mode) newErrors.mode = 'El modo es requerido'
+      if (!formDataToValidate.callsign) newErrors.callsign = 'Callsign is required'
+      if (!formDataToValidate.date) newErrors.date = 'Date is required'
+      if (!formDataToValidate.time) newErrors.time = 'Time is required'
+      if (!formDataToValidate.frequency) newErrors.frequency = 'Frequency is required'
+      if (!formDataToValidate.report) newErrors.report = 'Report is required'
+      if (!formDataToValidate.mode) newErrors.mode = 'Mode is required'
 
       setErrors(newErrors)
 
@@ -48,11 +48,11 @@ export const useQSLForm = (initialState = INITIAL_FORM_STATE) => {
       }
 
       try {
-        // Generar la imagen QSL
+        // Generate QSL image
         const imageUrl = await generateQSLImage(formDataToValidate.qslTemplate, formDataToValidate)
 
         if (!imageUrl) {
-          throw new Error('Error al generar la imagen QSL')
+          throw new Error('Error generating QSL image')
         }
 
         setGeneratedQSL({
@@ -61,10 +61,10 @@ export const useQSLForm = (initialState = INITIAL_FORM_STATE) => {
         })
         return true
       } catch (error) {
-        console.error('Error al generar QSL:', error)
+        console.error('Error generating QSL:', error)
         setErrors((prev) => ({
           ...prev,
-          general: 'Error al generar la QSL. Por favor, intente nuevamente.'
+          general: 'Error generating QSL. Please try again.'
         }))
         return false
       }
@@ -75,7 +75,7 @@ export const useQSLForm = (initialState = INITIAL_FORM_STATE) => {
   const resetForm = useCallback(() => {
     setFormData((prev) => ({
       ...INITIAL_FORM_STATE,
-      qslTemplate: prev.qslTemplate // Mantener el template seleccionado
+      qslTemplate: prev.qslTemplate // Keep the selected template
     }))
     setGeneratedQSL(null)
   }, [])
