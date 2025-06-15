@@ -81,7 +81,7 @@ export const generateQSL = async (templateImage, formData) => {
 
     // If there's an error loading the image
     img.onerror = () => {
-      console.error('Error al cargar la imagen de la plantilla')
+      console.error('Error loading template image')
       resolve(null)
     }
 
