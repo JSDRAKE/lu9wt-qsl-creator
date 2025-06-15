@@ -21,6 +21,24 @@ function App() {
     // TODO: Implementar lógica de envío de correo
   }, [])
 
+  const handleDownloadQSL = useCallback(() => {
+    if (!generatedQSL?.imageUrl) return
+
+    // Create a temporary anchor element
+    const link = document.createElement('a')
+    link.href = generatedQSL.imageUrl
+
+    // Create a filename with the callsign and current date
+    const date = new Date().toISOString().split('T')[0]
+    const filename = `QSL-${generatedQSL.callsign || 'unknown'}-${generatedQSL.mode}-${date}.jpg`
+
+    // Set the download attribute and trigger the click
+    link.download = filename
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+  }, [generatedQSL])
+
   return (
     <div className="container">
       <Header />
@@ -42,7 +60,7 @@ function App() {
       <QSLManager
         generatedQSL={generatedQSL}
         onSendEmail={handleEmailSubmit}
-        onDownload={() => console.log('Descargando QSL')}
+        onDownload={handleDownloadQSL}
       />
     </div>
   )
