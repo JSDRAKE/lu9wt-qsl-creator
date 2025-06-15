@@ -1,93 +1,36 @@
-import { useState } from 'react'
-import EmailForm from './components/EmailForm'
+import { useCallback } from 'react'
 import Header from './components/Header'
-import QSLForm from './components/QSLForm'
-import QSLGenerated from './components/QSLGenerated'
 import QSLCardSelector from './components/QSLCardSelector'
+import QSLForm from './components/QSLForm'
+import QSLManager from './components/QSLManager'
+import { useQSLForm } from './hooks/useQSLForm'
 
 function App() {
-  const [formData, setFormData] = useState({
-    callsign: '',
-    date: '',
-    time: '',
-    frequency: '',
-    report: '',
-    mode: '',
-    qslTemplate: ''
-  })
-  const [generatedQSL, setGeneratedQSL] = useState(null)
-  const [showEmailForm, setShowEmailForm] = useState(false)
+  const { formData, generatedQSL, handleInputChange, handleTemplateChange, generateQSL } =
+    useQSLForm()
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value
-    }))
-  }
-
-  const handleGenerateQSL = () => {
-    // Aquí iría la lógica para generar la QSL
-    setGeneratedQSL({
-      ...formData,
-      imageUrl: formData.qslTemplate // Por ahora usamos la URL de la plantilla
-    })
-  }
-
-  const handleReset = () => {
-    setFormData({
-      callsign: '',
-      date: '',
-      time: '',
-      frequency: '',
-      report: '',
-      mode: '',
-      qslTemplate: ''
-    })
-    setGeneratedQSL(null)
-    setShowEmailForm(false)
-  }
-
-  const handleSendEmail = () => {
-    setShowEmailForm(true)
-  }
-
-  const handleBack = () => {
-    setShowEmailForm(false)
-  }
-
-  const handleEmailSubmit = (email) => {
-    // Aquí iría la lógica para enviar el correo
+  const handleEmailSubmit = useCallback((email) => {
     console.log('Enviando QSL a:', email)
-  }
+    // TODO: Implementar lógica de envío de correo
+  }, [])
 
   return (
     <div className="container">
       <Header />
-
       <div className="content">
-        <QSLForm
-          formData={formData}
-          onInputChange={handleInputChange}
-          onGenerate={handleGenerateQSL}
-          onReset={handleReset}
-        />
+        <QSLForm formData={formData} onInputChange={handleInputChange} onGenerate={generateQSL} />
 
         <QSLCardSelector
           qslTemplate={formData.qslTemplate}
-          onTemplateChange={(value) => setFormData((prev) => ({ ...prev, qslTemplate: value }))}
+          onTemplateChange={handleTemplateChange}
         />
       </div>
 
-      {generatedQSL && (
-        <QSLGenerated
-          qslData={generatedQSL}
-          onDownload={() => console.log('Descargando QSL')}
-          onSend={handleSendEmail}
-        />
-      )}
-
-      {showEmailForm && <EmailForm onBack={handleBack} onSubmit={handleEmailSubmit} />}
+      <QSLManager
+        generatedQSL={generatedQSL}
+        onSendEmail={handleEmailSubmit}
+        onDownload={() => console.log('Descargando QSL')}
+      />
     </div>
   )
 }
