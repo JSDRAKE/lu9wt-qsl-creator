@@ -1,7 +1,8 @@
 import { electronApp, is, optimizer } from '@electron-toolkit/utils'
-import { app, BrowserWindow, ipcMain, shell } from 'electron'
+import { app, BrowserWindow, ipcMain, Menu, shell } from 'electron'
 import { join } from 'path'
-import icon from '../../resources/icon.png?asset'
+const icon = join(__dirname, '../../resources/icon.png')
+const packageInfo = require('../../package.json')
 
 function createWindow() {
   // Create the browser window.
@@ -38,6 +39,122 @@ function createWindow() {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
+function createMenu() {
+  // Crear plantilla del menú
+  const template = [
+    // Menú de la aplicación (solo en macOS)
+    ...(process.platform === 'darwin'
+      ? [
+          {
+            label: app.name,
+            submenu: [
+              {
+                label: 'Acerca de QSL Creator',
+                click: () => {
+                  const focusedWindow = BrowserWindow.getFocusedWindow()
+                  if (focusedWindow) {
+                    focusedWindow.webContents.send('show-about-dialog')
+                  }
+                }
+              },
+              { type: 'separator' },
+              { role: 'services' },
+              { type: 'separator' },
+              { role: 'hide' },
+              { role: 'hideOthers' },
+              { role: 'unhide' },
+              { type: 'separator' },
+              { role: 'quit' }
+            ]
+          }
+        ]
+      : []),
+
+    // Menú Archivo
+    {
+      label: 'Archivo',
+      submenu: [{ role: 'close', label: 'Cerrar ventana' }]
+    },
+
+    // Menú Edición
+    {
+      label: 'Edición',
+      submenu: [
+        { role: 'undo', label: 'Deshacer' },
+        { role: 'redo', label: 'Rehacer' },
+        { type: 'separator' },
+        { role: 'cut', label: 'Cortar' },
+        { role: 'copy', label: 'Copiar' },
+        { role: 'paste', label: 'Pegar' },
+        ...(process.platform === 'darwin'
+          ? [
+              { role: 'pasteAndMatchStyle' },
+              { role: 'delete' },
+              { role: 'selectAll' },
+              { type: 'separator' },
+              {
+                label: 'Dictado',
+                submenu: [{ role: 'startSpeaking' }, { role: 'stopSpeaking' }]
+              }
+            ]
+          : [
+              { role: 'delete' },
+              { type: 'separator' },
+              { role: 'selectAll', label: 'Seleccionar todo' }
+            ])
+      ]
+    },
+
+    // Menú Ver
+    {
+      label: 'Ver',
+      submenu: [
+        { role: 'reload' },
+        { role: 'forceReload' },
+        { role: 'toggleDevTools' },
+        { type: 'separator' },
+        { role: 'resetZoom' },
+        { role: 'zoomIn' },
+        { role: 'zoomOut' },
+        { type: 'separator' },
+        { role: 'togglefullscreen' }
+      ]
+    },
+
+    // Menú Ventana
+    {
+      label: 'Ventana',
+      submenu: [
+        { role: 'minimize' },
+        { role: 'zoom' },
+        ...(process.platform === 'darwin'
+          ? [{ type: 'separator' }, { role: 'front' }, { type: 'separator' }, { role: 'window' }]
+          : [{ role: 'close' }])
+      ]
+    },
+
+    // Menú Ayuda
+    {
+      role: 'help',
+      label: 'Ayuda',
+      submenu: [
+        {
+          label: 'Acerca de QSL Creator',
+          click: () => {
+            const focusedWindow = BrowserWindow.getFocusedWindow()
+            if (focusedWindow) {
+              focusedWindow.webContents.send('show-about-dialog')
+            }
+          }
+        }
+      ]
+    }
+  ]
+
+  const menu = Menu.buildFromTemplate(template)
+  Menu.setApplicationMenu(menu)
+}
+
 app.whenReady().then(() => {
   // Set app user model id for windows
   electronApp.setAppUserModelId('com.electron')
@@ -49,14 +166,24 @@ app.whenReady().then(() => {
     optimizer.watchWindowShortcuts(window)
   })
 
-  // IPC test
-  ipcMain.on('ping', () => console.log('pong'))
+  // Crear menú de la aplicación
+  createMenu()
+
+  // Manejar la solicitud de información de la aplicación
+  ipcMain.handle('get-app-info', () => ({
+    name: packageInfo.name,
+    displayName: packageInfo.displayName || packageInfo.name,
+    version: packageInfo.version,
+    description: packageInfo.description,
+    author: packageInfo.author,
+    homepage: packageInfo.homepage,
+    bugs: packageInfo.bugs?.url || packageInfo.bugs,
+    license: packageInfo.license
+  }))
 
   createWindow()
 
   app.on('activate', function () {
-    // On macOS it's common to re-create a window in the app when the
-    // dock icon is clicked and there are no other windows open.
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
   })
 })
