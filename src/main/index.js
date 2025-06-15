@@ -70,10 +70,54 @@ function createMenu() {
         ]
       : []),
 
-    // Menú Archivo
+    // File Menu
     {
-      label: 'Archivo',
-      submenu: [{ role: 'close', label: 'Cerrar ventana' }]
+      label: 'File',
+      submenu: [
+        {
+          label: 'Agregar QSL',
+          accelerator: 'CmdOrCtrl+N',
+          click: () => {
+            const focusedWindow = BrowserWindow.getFocusedWindow()
+            if (focusedWindow) {
+              focusedWindow.webContents.send('menu-add-qsl')
+            }
+          }
+        },
+        {
+          label: 'Eliminar QSL',
+          accelerator: 'CmdOrCtrl+Backspace',
+          click: () => {
+            const focusedWindow = BrowserWindow.getFocusedWindow()
+            if (focusedWindow) {
+              focusedWindow.webContents.send('menu-delete-qsl')
+            }
+          }
+        },
+        { type: 'separator' },
+        {
+          label: 'Datos del usuario',
+          click: () => {
+            const focusedWindow = BrowserWindow.getFocusedWindow()
+            if (focusedWindow) {
+              focusedWindow.webContents.send('menu-user-data')
+            }
+          }
+        },
+        { type: 'separator' },
+        {
+          label: 'Configuración',
+          accelerator: 'CmdOrCtrl+,',
+          click: () => {
+            const focusedWindow = BrowserWindow.getFocusedWindow()
+            if (focusedWindow) {
+              focusedWindow.webContents.send('show-settings-dialog')
+            }
+          }
+        },
+        { type: 'separator' },
+        { role: 'close', label: 'Close Window' }
+      ]
     },
 
     // Menú Edición
@@ -180,6 +224,23 @@ app.whenReady().then(() => {
     bugs: packageInfo.bugs?.url || packageInfo.bugs,
     license: packageInfo.license
   }))
+
+  // Manejar la solicitud de configuración
+  ipcMain.handle('get-settings', () => {
+    // Aquí puedes cargar la configuración desde un archivo o base de datos
+    return {
+      theme: 'light',
+      language: 'es',
+      autoSave: true,
+      autoUpdate: true
+    }
+  })
+
+  ipcMain.handle('save-settings', (_, settings) => {
+    // Aquí puedes guardar la configuración en un archivo o base de datos
+    console.log('Configuración guardada:', settings)
+    return { success: true }
+  })
 
   createWindow()
 

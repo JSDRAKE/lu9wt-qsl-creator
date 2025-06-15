@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import AboutDialog from './components/AboutDialog'
+import SettingsDialog from './components/SettingsDialog'
 import Header from './components/Header'
 import QSLCardSelector from './components/QSLCardSelector'
 import QSLForm from './components/QSLForm'
@@ -8,6 +9,7 @@ import { useQSLForm } from './hooks/useQSLForm'
 
 function App() {
   const [showAbout, setShowAbout] = useState(false)
+  const [showSettings, setShowSettings] = useState(false)
   const [appInfo, setAppInfo] = useState(null)
 
   const {
@@ -20,64 +22,90 @@ function App() {
     errors
   } = useQSLForm()
 
-  // Manejar el evento de mostrar el diálogo Acerca de
+  // Load application info once
   useEffect(() => {
-    const handleShowAbout = async () => {
+    const loadAppInfo = async () => {
+      if (!window.electron?.ipcRenderer || appInfo) return
       try {
-        if (window.electron && window.electron.ipcRenderer) {
-          const info = await window.electron.ipcRenderer.invoke('get-app-info')
-          setAppInfo(info)
-        }
-        setShowAbout(true)
+        const info = await window.electron.ipcRenderer.invoke('get-app-info')
+        setAppInfo(info)
       } catch (error) {
-        console.error('Error al obtener información de la aplicación:', error)
-        setShowAbout(true) // Mostrar con información por defecto
+        console.error('Error loading application info:', error)
       }
     }
+    loadAppInfo()
+  }, [appInfo])
 
-    const handleKeyDown = (e) => {
-      if (e.key === 'Escape' && showAbout) {
-        setShowAbout(false)
-      }
-    }
+  // Handle About dialog
+  const handleShowAbout = useCallback(() => setShowAbout(true), [])
 
-    // Escuchar el evento del menú
-    const removeShowAboutListener = window.electron?.ipcRenderer?.on(
-      'show-about-dialog',
-      handleShowAbout
-    )
+  // Handle Settings dialog
+  const handleShowSettings = useCallback(() => setShowSettings(true), [])
 
-    // Escuchar tecla ESC
-    window.addEventListener('keydown', handleKeyDown)
-
-    return () => {
-      removeShowAboutListener?.()
-      window.removeEventListener('keydown', handleKeyDown)
-    }
-  }, [showAbout])
-
-  const handleEmailSubmit = useCallback((email) => {
-    console.log('Enviando QSL a:', email)
-    // TODO: Implementar lógica de envío de correo
+  // Menu event handlers
+  const handleAddQSL = useCallback(() => {
+    // Logic to add a new QSL
+    console.log('Add new QSL')
+    // TODO: Implement QSL addition logic
   }, [])
 
-  const handleDownloadQSL = useCallback(() => {
+  const handleDeleteQSL = useCallback(() => {
+    // Logic to delete current/selected QSL
+    console.log('Delete current QSL')
+    // TODO: Implement QSL deletion logic
+  }, [])
+
+  const handleUserData = useCallback(() => {
+    // Logic to show/edit user data
+    console.log('Show/edit user data')
+    // TODO: Implement user data logic
+  }, [])
+
+  // Set up keyboard and application event listeners
+  useEffect(() => {
+    if (!window.electron?.ipcRenderer) return
+
+    // Set up IPC listeners
+    const cleanupIpc = [
+      window.electron.ipcRenderer.on('show-about-dialog', handleShowAbout),
+      window.electron.ipcRenderer.on('show-settings-dialog', handleShowSettings),
+      window.electron.ipcRenderer.on('menu-add-qsl', handleAddQSL),
+      window.electron.ipcRenderer.on('menu-delete-qsl', handleDeleteQSL),
+      window.electron.ipcRenderer.on('menu-user-data', handleUserData)
+    ]
+
+    // Set up keyboard shortcuts
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        setShowAbout(false)
+        setShowSettings(false)
+      }
+    }
+    document.addEventListener('keydown', handleKeyDown)
+
+    // Cleanup
+    return () => {
+      cleanupIpc.forEach((cleanup) => cleanup?.())
+      document.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [handleShowAbout, handleShowSettings, handleAddQSL, handleDeleteQSL, handleUserData])
+
+  const handleEmailSubmit = (email) => {
+    console.log('Sending QSL to:', email)
+    // TODO: Implement email sending logic
+  }
+
+  const handleDownloadQSL = () => {
     if (!generatedQSL?.imageUrl) return
 
-    // Create a temporary anchor element
     const link = document.createElement('a')
     link.href = generatedQSL.imageUrl
-
-    // Create a filename with the callsign and current date
     const date = new Date().toISOString().split('T')[0]
-    const filename = `QSL-${generatedQSL.callsign || 'unknown'}-${generatedQSL.mode}-${date}.jpg`
-
-    // Set the download attribute and trigger the click
-    link.download = filename
+    link.download = `QSL-${generatedQSL.callsign || 'unknown'}-${generatedQSL.mode}-${date}.jpg`
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
-  }, [generatedQSL])
+  }
 
   return (
     <div className="container">
@@ -104,6 +132,7 @@ function App() {
       />
 
       <AboutDialog isOpen={showAbout} onClose={() => setShowAbout(false)} appInfo={appInfo} />
+      <SettingsDialog isOpen={showSettings} onClose={() => setShowSettings(false)} />
     </div>
   )
 }
