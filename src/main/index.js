@@ -1,6 +1,11 @@
 import { electronApp, is, optimizer } from '@electron-toolkit/utils'
 import { app, BrowserWindow, ipcMain, Menu, shell } from 'electron'
-import { join } from 'path'
+import { dirname, join } from 'path'
+import { fileURLToPath } from 'url'
+import { getUserData, saveUserData } from './userData.js'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
 const icon = join(__dirname, '../../resources/icon.png')
 const packageInfo = require('../../package.json')
 
@@ -224,6 +229,37 @@ app.whenReady().then(() => {
     bugs: packageInfo.bugs?.url || packageInfo.bugs,
     license: packageInfo.license
   }))
+
+  // User data handlers
+  ipcMain.handle('check-user-data', async () => {
+    try {
+      const data = await getUserData()
+      return { success: true, data }
+    } catch (error) {
+      console.error('Error checking user data:', error)
+      return { success: false, error: error.message }
+    }
+  })
+
+  ipcMain.handle('get-user-data', async () => {
+    try {
+      const data = await getUserData()
+      return { success: true, data }
+    } catch (error) {
+      console.error('Error in get-user-data:', error)
+      return { success: false, error: error.message }
+    }
+  })
+
+  ipcMain.handle('save-user-data', async (event, data) => {
+    try {
+      const savedData = await saveUserData(data)
+      return { success: true, data: savedData }
+    } catch (error) {
+      console.error('Error in save-user-data:', error)
+      return { success: false, error: error.message }
+    }
+  })
 
   // Manejar la solicitud de configuración
   ipcMain.handle('get-settings', () => {
