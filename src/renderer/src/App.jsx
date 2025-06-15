@@ -1,16 +1,21 @@
 import { useCallback, useEffect, useState } from 'react'
 import AboutDialog from './components/AboutDialog'
-import SettingsDialog from './components/SettingsDialog'
 import Header from './components/Header'
+import InitialDataDialog from './components/InitialDataDialog'
 import QSLCardSelector from './components/QSLCardSelector'
 import QSLForm from './components/QSLForm'
 import QSLManager from './components/QSLManager'
+import SettingsDialog from './components/SettingsDialog'
+import UserDataDialog from './components/UserDataDialog'
 import { useQSLForm } from './hooks/useQSLForm'
 
 function App() {
   const [showAbout, setShowAbout] = useState(false)
   const [showSettings, setShowSettings] = useState(false)
+  const [showUserData, setShowUserData] = useState(false)
+  const [showInitialDialog, setShowInitialDialog] = useState(false)
   const [appInfo, setAppInfo] = useState(null)
+  const [isCheckingUserData, setIsCheckingUserData] = useState(true)
 
   const {
     formData,
@@ -21,6 +26,21 @@ function App() {
     resetForm,
     errors
   } = useQSLForm()
+
+  // Check for user data on app start
+  const checkUserData = useCallback(async () => {
+    if (!window.electron?.ipcRenderer) return
+    try {
+      const { success, data } = await window.electron.ipcRenderer.invoke('check-user-data')
+      if (!success || !data || Object.values(data).every((value) => !value)) {
+        setShowInitialDialog(true)
+      }
+    } catch (error) {
+      console.error('Error checking user data:', error)
+    } finally {
+      setIsCheckingUserData(false)
+    }
+  }, [])
 
   // Load application info once
   useEffect(() => {
@@ -33,8 +53,15 @@ function App() {
         console.error('Error loading application info:', error)
       }
     }
+
     loadAppInfo()
-  }, [appInfo])
+    checkUserData()
+  }, [appInfo, checkUserData])
+
+  const handleOpenUserData = () => {
+    setShowInitialDialog(false)
+    setShowUserData(true)
+  }
 
   // Handle About dialog
   const handleShowAbout = useCallback(() => setShowAbout(true), [])
@@ -56,9 +83,7 @@ function App() {
   }, [])
 
   const handleUserData = useCallback(() => {
-    // Logic to show/edit user data
-    console.log('Show/edit user data')
-    // TODO: Implement user data logic
+    setShowUserData(true)
   }, [])
 
   // Set up keyboard and application event listeners
@@ -133,6 +158,14 @@ function App() {
 
       <AboutDialog isOpen={showAbout} onClose={() => setShowAbout(false)} appInfo={appInfo} />
       <SettingsDialog isOpen={showSettings} onClose={() => setShowSettings(false)} />
+      <UserDataDialog isOpen={showUserData} onClose={() => setShowUserData(false)} />
+      {!isCheckingUserData && (
+        <InitialDataDialog
+          isOpen={showInitialDialog}
+          onClose={() => setShowInitialDialog(false)}
+          onOpenUserData={handleOpenUserData}
+        />
+      )}
     </div>
   )
 }
