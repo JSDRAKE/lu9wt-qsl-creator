@@ -199,3 +199,122 @@ input:invalid {
 input:focus:invalid {
   box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
 }
+
+/* Estilos para el modal de Acerca de */
+.about-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(3px);
+}
+
+.about-modal {
+  background: white;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+  transform: translateY(-20px);
+  opacity: 0;
+  animation: modalFadeIn 0.3s ease-out forwards;
+}
+
+@keyframes modalFadeIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.about-modal-header {
+  background-color: #6555d5;
+  color: white;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.about-modal-header h2 {
+  color: white;
+  margin: 0;
+  font-size: 1.3rem;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.8rem;
+  cursor: pointer;
+  padding: 0 10px;
+  line-height: 1;
+  transition: transform 0.2s;
+}
+
+.close-button:hover {
+  transform: scale(1.2);
+}
+
+.about-modal-content {
+  padding: 25px;
+  text-align: center;
+}
+
+.about-modal-content .app-icon {
+  margin-bottom: 20px;
+}
+
+.about-modal-content h1 {
+  color: #333;
+  margin: 0 0 15px 0;
+  font-size: 1.8rem;
+}
+
+.about-modal-content p {
+  color: #555;
+  margin: 10px 0;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.homepage-link {
+  color: #6555d5;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.2s;
+  display: inline-block;
+  margin-top: 15px;
+  padding: 8px 16px;
+  border: 2px solid #6555d5;
+  border-radius: 5px;
+}
+
+.homepage-link:hover {
+  color: #4a3d9c;
+  background-color: #f5f3ff;
+}
+
+/* Animación de cierre del modal */
+@keyframes modalFadeOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+}
+
+.about-modal.closing {
+  animation: modalFadeOut 0.3s ease-in forwards;
+}
