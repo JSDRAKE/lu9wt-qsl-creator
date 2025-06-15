@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useCallback, useState } from 'react'
 
 export const INITIAL_FORM_STATE = {
   callsign: '',
@@ -31,7 +31,10 @@ export const useQSLForm = (initialState = INITIAL_FORM_STATE) => {
   }, [formData])
 
   const resetForm = useCallback(() => {
-    setFormData(INITIAL_FORM_STATE)
+    setFormData((prev) => ({
+      ...INITIAL_FORM_STATE,
+      qslTemplate: prev.qslTemplate // Mantener el template seleccionado
+    }))
     setGeneratedQSL(null)
   }, [])
 
