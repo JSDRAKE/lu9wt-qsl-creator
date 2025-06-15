@@ -1,6 +1,7 @@
 {
   "name": "lu9wt-qsl-creator",
-  "version": "1.0.0",
+  "version": "1.0.0-beta",
+  "displayName": "QSL Creator by LU9WT",
   "description": "QSL Creator by LU9WT",
   "main": "./out/main/index.js",
   "author": "JSDRAKE - LU9WT",
