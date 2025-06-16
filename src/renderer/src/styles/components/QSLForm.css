@@ -163,11 +163,60 @@ select {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
+  background-color: var(--input-bg, rgba(30, 58, 76, 0.5));
+  color: var(--text-primary, #e0e0e0);
+  border: 1px solid var(--form-border, #1e3a4c);
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+  padding: 10px 15px;
+  margin: 6px 0 20px;
+  width: 100%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='292.4' height='292.4'%3E%3Cpath fill='%238fbcbb' d='M287 69.4a17.6 17.6 0 0 0-13-5.4H18.4c-5 0-9.3 1.8-12.9 5.4A17.6 17.6 0 0 0 0 82.2c0 5 1.8 9.3 5.4 12.9l128 127.9c3.6 3.6 7.8 5.4 12.8 5.4s9.2-1.8 12.8-5.4L287 95c3.5-3.5 5.4-7.8 5.4-12.8 0-5-1.9-9.2-5.5-12.8z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
-  background-position: right 1rem center;
-  background-size: 0.65em auto;
-  padding-right: 2.5rem;
+  background-position: right 0.8rem center;
+  background-size: 0.6em auto;
+  padding-right: 2.2rem;
+}
+
+/* Estilos para las opciones del select */
+select option {
+  padding: 10px 15px;
+  background-color: var(--form-bg, rgba(10, 26, 36, 0.95));
+  color: var(--text-primary, #e0e0e0);
+  border: none;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+}
+
+/* Estilo para el hover de las opciones */
+select option:hover,
+select option:focus,
+select option:checked {
+  background-color: var(--btn-primary, #2c5e80);
+  color: #fff;
+}
+
+/* Estilo para el scrollbar del select */
+select::-webkit-scrollbar {
+  width: 8px;
+}
+
+select::-webkit-scrollbar-track {
+  background: var(--input-bg, rgba(30, 58, 76, 0.5));
+  border-radius: 4px;
+}
+
+select::-webkit-scrollbar-thumb {
+  background-color: var(--form-border, #1e3a4c);
+  border-radius: 4px;
+}
+
+select::-webkit-scrollbar-thumb:hover {
+  background-color: var(--btn-primary, #3a7ca5);
 }
 
 /* Efecto de brillo al pasar el mouse */
