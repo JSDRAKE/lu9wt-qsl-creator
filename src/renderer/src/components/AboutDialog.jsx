@@ -37,10 +37,7 @@ const AboutDialog = ({ isOpen, onClose, appInfo }) => {
     <div className="about-modal-overlay">
       <div className="about-modal">
         <div className="about-modal-header">
-          <h2>Acerca de </h2>
-          <button className="btn close-button" onClick={onClose} aria-label="Cerrar">
-            &times;
-          </button>
+          <h2>Acerca de</h2>
         </div>
         <div className="about-modal-content">
           <div className="about-header">
@@ -93,6 +90,11 @@ const AboutDialog = ({ isOpen, onClose, appInfo }) => {
                 </a>
               </div>
             )}
+          </div>
+          <div className="about-modal-footer">
+            <button className="btn btn-secondary close-button" onClick={onClose}>
+              Cerrar
+            </button>
           </div>
         </div>
       </div>
