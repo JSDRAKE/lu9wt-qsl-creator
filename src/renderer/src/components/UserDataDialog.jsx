@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import { useEffect, useState } from 'react'
-import '../styles/user-data-dialog.css'
+import '../styles/dialogs/user-data-dialog.css'
 
 const UserDataDialog = ({ isOpen, onClose }) => {
   const [formData, setFormData] = useState({

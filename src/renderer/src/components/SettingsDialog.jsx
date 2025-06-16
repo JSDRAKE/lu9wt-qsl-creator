@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import { useCallback, useEffect, useState } from 'react'
-import '../styles/settings-dialog.css'
+import '../styles/dialogs/settings-dialog.css'
 
 const SettingsDialog = ({ isOpen, onClose }) => {
   const [settings, setSettings] = useState({

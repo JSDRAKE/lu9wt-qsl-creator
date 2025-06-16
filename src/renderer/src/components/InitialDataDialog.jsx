@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import { useEffect } from 'react'
-import '../styles/initial-data-dialog.css'
+import '../styles/dialogs/initial-data-dialog.css'
 
 const InitialDataDialog = ({ isOpen, onClose, onOpenUserData }) => {
   // Handle escape key to close dialog

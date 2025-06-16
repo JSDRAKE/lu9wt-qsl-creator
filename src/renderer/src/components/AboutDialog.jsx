@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import { useCallback, useEffect } from 'react'
-import '../styles/about-dialog.css'
+import '../styles/dialogs/about-dialog.css'
 
 const AboutDialog = ({ isOpen, onClose, appInfo }) => {
   // Cerrar con la tecla ESC
