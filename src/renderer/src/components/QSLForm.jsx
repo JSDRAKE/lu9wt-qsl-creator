@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types'
 import { useState } from 'react'
 import '../styles/components/QSLForm.css'
+import '../styles/components/buttons.css'
 
 const QSLForm = ({ onGenerate, onInputChange, formData, onReset }) => {
   const [errors, setErrors] = useState({
