@@ -3,7 +3,7 @@ import '../styles/components/Header.css'
 const Header = () => {
   return (
     <header>
-      <h1>QSL Creator for LU2WA</h1>
+      <h1>Creación de QSL Digital</h1>
     </header>
   )
 }
