@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import PropTypes from 'prop-types'
 import '../styles/components/EmailForm.css'
 
 const EmailForm = ({ onBack, onSubmit }) => {
@@ -23,17 +24,17 @@ const EmailForm = ({ onBack, onSubmit }) => {
 
   return (
     <div className="email-form-container">
-      <h2>Send QSL by Email</h2>
+      <h2>Envia tu QSL</h2>
 
       <form onSubmit={handleSubmit} className="email-form">
         <div className="form-group">
-          <label htmlFor="email">Email Address</label>
+          <label htmlFor="email">Direccion de correo electronico</label>
           <input
             type="email"
             id="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="recipient@example.com"
+            placeholder="email@email.com"
             required
             disabled={isSubmitting}
           />
@@ -46,15 +47,20 @@ const EmailForm = ({ onBack, onSubmit }) => {
             className="btn btn-secondary"
             disabled={isSubmitting}
           >
-            Back
+            Atrás
           </button>
           <button type="submit" className="btn btn-primary" disabled={!email || isSubmitting}>
-            {isSubmitting ? 'Sending...' : 'Send Email'}
+            {isSubmitting ? 'Enviando...' : 'Enviar QSL'}
           </button>
         </div>
       </form>
     </div>
   )
+}
+
+EmailForm.propTypes = {
+  onBack: PropTypes.func.isRequired,
+  onSubmit: PropTypes.func.isRequired
 }
 
 export default EmailForm
