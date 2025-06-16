@@ -25,9 +25,13 @@ const QSLCardSelector = ({ qslTemplate, onTemplateChange, error }) => {
 
   const selectedTemplate = useMemo(() => {
     if (!qslTemplate) return null
-    const templateName = qslTemplate.split('/').pop().replace('.jpg', '')
-    return templates.find((t) => t.value === templateName)
+    // Buscar la plantilla que coincida con la imagen seleccionada
+    return templates.find((t) => t.image === qslTemplate)
   }, [qslTemplate, templates])
+
+  // Obtener el ID de la plantilla seleccionada o cadena vacía si no hay selección
+  const selectedTemplateId = selectedTemplate ? selectedTemplate.id : ''
+
   return (
     <div className="qsl-card-selector">
       <h2>Selección de QSL</h2>
@@ -35,10 +39,10 @@ const QSLCardSelector = ({ qslTemplate, onTemplateChange, error }) => {
 
       <div className="template-selector">
         <select
-          value={qslTemplate || ''}
+          value={selectedTemplateId}
           onChange={(e) => {
-            const selectedValue = e.target.value
-            const template = templates.find((t) => t.id === selectedValue)
+            const selectedId = e.target.value
+            const template = templates.find((t) => t.id === selectedId)
             onTemplateChange(template ? template.image : '')
           }}
           className="template-select"
