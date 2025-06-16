@@ -1,9 +1,9 @@
 /* QSLCardSelector Component Styles */
 .qsl-card-selector {
-  background-color: white;
+  background-color: var(--color-primary);
   padding: 20px;
   border-radius: 5px;
-  border: 2px solid #6555d5;
+  border: 2px solid var(--color-primary-lighter);
   text-align: center;
 }
 
@@ -15,7 +15,7 @@
 .template-preview img {
   max-width: 100%;
   height: auto;
-  border: 1px solid #ddd;
+  border: 1px solid var(--color-primary-lighter);
   border-radius: 4px;
   padding: 5px;
 }

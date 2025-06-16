@@ -1,20 +1,25 @@
 /* QSLForm Component Styles */
+@import '../base.css';
+
 .form-container {
-  background-color: white;
+  background-color: var(--color-primary);
   padding: 20px;
   border-radius: 5px;
-  border: 2px solid #6555d5;
+  border: 2px solid var(--color-primary-lighter);
 }
 
-label {
-  color: black;
+#qsl-form .form-group > label {
+  color: var(--text-on-primary);
   margin-bottom: 10px;
   display: block;
+  font-weight: bold;
 }
 
 input[type='text'],
 input[type='email'],
 select {
+  background-color: var(--color-primary-lighter);
+  color: var(--text-on-primary);
   width: 100%;
   padding: 12px 20px;
   margin: 8px 0;
@@ -28,7 +33,6 @@ select {
   margin-bottom: 15px;
 }
 
-/* Estilos para mensajes de error */
 .form-group.has-error input {
   border-color: #dc3545;
   background-color: #fff8f8;
