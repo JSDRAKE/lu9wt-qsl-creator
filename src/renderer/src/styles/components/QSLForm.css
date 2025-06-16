@@ -1,67 +1,192 @@
-/* QSLForm Component Styles */
+/* QSLForm Component - Modern Radio Style */
 @import '../base.css';
 
+:root {
+  --form-bg: rgba(10, 26, 36, 0.8);
+  --form-border: #1e3a4c;
+  --input-bg: rgba(30, 58, 76, 0.6);
+  --input-focus: #3a7ca5;
+  --text-primary: #e0e0e0;
+  --text-secondary: #8fbcbb;
+  --error: #ff3d5a;
+  --success: #00ff9d;
+}
+
 .form-container {
-  background-color: var(--color-primary);
-  padding: 20px;
-  border-radius: 5px;
-  border: 2px solid var(--color-primary-lighter);
+  background: var(--form-bg);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid var(--form-border);
+  border-radius: 30px;
+  padding: 2rem;
+  margin: 2px 0;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Efecto de rejilla sutil */
+.form-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background:
+    linear-gradient(rgba(58, 124, 165, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(58, 124, 165, 0.05) 1px, transparent 1px);
+  background-size: 20px 20px;
+  opacity: 0.5;
+  pointer-events: none;
+  z-index: 0;
+}
+
+#qsl-form {
+  position: relative;
+  z-index: 1;
 }
 
 #qsl-form .form-group > label {
-  color: var(--text-on-primary);
-  margin-bottom: 10px;
+  color: var(--text-secondary);
+  margin-bottom: 2px;
   display: block;
-  font-weight: bold;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
 }
 
 input[type='text'],
 input[type='email'],
-select {
-  background-color: var(--color-primary-lighter);
-  color: var(--text-on-primary);
+select,
+textarea {
+  background-color: var(--input-bg);
+  color: var(--text-primary);
   width: 100%;
-  padding: 12px 20px;
-  margin: 8px 0;
-  border: 1px solid #ccc;
+  padding: 12px 16px;
+  margin: 6px 0 20px;
+  border: 1px solid var(--form-border);
   border-radius: 4px;
   box-sizing: border-box;
-  margin-bottom: 15px;
+  font-family: 'Courier New', monospace;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+input[type='text']:focus,
+input[type='email']:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--input-focus);
+  box-shadow: 0 0 0 2px rgba(58, 124, 165, 0.3);
+  background-color: rgba(58, 124, 165, 0.1);
+}
+
+/* Heading styles */
+.form-container > h2 {
+  color: #fff;
+  text-align: center;
+  margin: 2px 0 10px;
+  font-size: 1.8rem;
+  font-weight: 700;
+  font-family: 'Courier New', monospace;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  position: relative;
+  z-index: 1;
+  text-shadow: 0 0 10px rgba(0, 255, 157, 0.3);
+  border-bottom: 1px solid var(--form-border);
+  padding-bottom: 5px;
+  overflow: hidden;
+}
+
+.form-container > h2::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  background: linear-gradient(90deg, transparent, rgba(0, 255, 157, 0.8), transparent);
+  animation: signalPulse 3s infinite;
+  z-index: 2;
+}
+
+@keyframes signalPulse {
+  0% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.3;
+  }
+}
+/* Estilos para grupos de formulario */
 .form-group {
-  margin-bottom: 15px;
+  margin-bottom: 1.5rem;
+  position: relative;
 }
 
-.form-group.has-error input {
-  border-color: #dc3545;
-  background-color: #fff8f8;
+/* Estilos para errores */
+.form-group.has-error input,
+.form-group.has-error select,
+.form-group.has-error textarea {
+  border-color: var(--error);
+  background-color: rgba(255, 61, 90, 0.1);
 }
 
-.form-group.has-error input:focus {
-  border-color: #dc3545;
-  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+.form-group.has-error input:focus,
+.form-group.has-error select:focus,
+.form-group.has-error textarea:focus {
+  border-color: var(--error);
+  box-shadow: 0 0 0 2px rgba(255, 61, 90, 0.25);
 }
 
 .error-message {
-  color: #dc3545;
-  font-size: 0.875em;
-  margin-top: 0.25rem;
-  padding: 0.25rem 0.5rem;
-  background-color: #f8d7da;
-  border: 1px solid #f5c6cb;
-  border-radius: 0.25rem;
+  color: var(--error);
+  font-size: 0.8rem;
+  margin: -15px 0 10px;
+  padding: 4px 8px;
+  background-color: rgba(255, 61, 90, 0.1);
+  border-left: 3px solid var(--error);
+  font-family: 'Courier New', monospace;
+  display: inline-block;
 }
 
-.form-group.has-error label {
-  color: #dc3545;
-  font-weight: bold;
+/* Estilos para select personalizado */
+select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='292.4' height='292.4'%3E%3Cpath fill='%238fbcbb' d='M287 69.4a17.6 17.6 0 0 0-13-5.4H18.4c-5 0-9.3 1.8-12.9 5.4A17.6 17.6 0 0 0 0 82.2c0 5 1.8 9.3 5.4 12.9l128 127.9c3.6 3.6 7.8 5.4 12.8 5.4s9.2-1.8 12.8-5.4L287 95c3.5-3.5 5.4-7.8 5.4-12.8 0-5-1.9-9.2-5.5-12.8z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 0.65em auto;
+  padding-right: 2.5rem;
 }
 
-input:invalid {
-  border-color: #dc3545;
+/* Efecto de brillo al pasar el mouse */
+.form-container:hover {
+  box-shadow: 0 6px 25px rgba(58, 124, 165, 0.2);
 }
 
-input:focus:invalid {
-  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+/* Los estilos de botones están en buttons.css */
+
+/* Responsive */
+@media (max-width: 768px) {
+  .form-container {
+    padding: 1.5rem;
+  }
+
+  input[type='text'],
+  input[type='email'],
+  select,
+  textarea {
+    padding: 10px 14px;
+  }
 }
