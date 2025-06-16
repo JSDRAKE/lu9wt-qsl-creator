@@ -1,21 +1,186 @@
-/* QSLCardSelector Component Styles */
+/* QSLCardSelector Component - Modern Radio Style */
 .qsl-card-selector {
-  background-color: var(--color-primary);
-  padding: 20px;
-  border-radius: 5px;
-  border: 2px solid var(--color-primary-lighter);
+  background: var(--form-bg, rgba(10, 26, 36, 0.8));
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid var(--form-border, #1e3a4c);
+  border-radius: 30px;
+  padding: 2rem;
+  margin: 2px 0;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  position: relative;
+  overflow: hidden;
+  color: var(--text-primary, #e0e0e0);
+  font-family: 'Courier New', monospace;
   text-align: center;
+}
+
+/* Grid background effect */
+.qsl-card-selector::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background:
+    linear-gradient(rgba(58, 124, 165, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(58, 124, 165, 0.05) 1px, transparent 1px);
+  background-size: 20px 20px;
+  opacity: 0.5;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.qsl-card-selector > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Heading styles */
+.qsl-card-selector > h2 {
+  color: #fff;
+  text-align: center;
+  margin: 2px 0 15px;
+  font-size: 1.8rem;
+  font-weight: 700;
+  font-family: 'Courier New', monospace;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-shadow: 0 0 10px rgba(0, 255, 157, 0.3);
+  border-bottom: 1px solid var(--form-border, #1e3a4c);
+  padding-bottom: 5px;
+  position: relative;
+  overflow: hidden;
+}
+
+.qsl-card-selector > h2::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  background: linear-gradient(90deg, transparent, rgba(0, 255, 157, 0.8), transparent);
+  animation: signalPulse 3s infinite;
+  z-index: 2;
+}
+
+.qsl-card-selector > p {
+  color: var(--text-secondary, #8fbcbb);
+  font-family: 'Courier New', monospace;
+  font-size: 1rem;
+  letter-spacing: 0.5px;
+}
+
+/* Template selector styles */
+.template-selector {
+  margin: 5px 0;
+}
+
+.template-select {
+  width: 100%;
+  padding: 10px 15px;
+  background-color: var(--input-bg, rgba(30, 58, 76, 0.5));
+  color: var(--text-primary, #e0e0e0);
+  border: 1px solid var(--form-border, #1e3a4c);
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+  margin-bottom: 5px;
+  transition: all 0.3s ease;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='292.4' height='292.4'%3E%3Cpath fill='%238fbcbb' d='M287 69.4a17.6 17.6 0 0 0-13-5.4H18.4c-5 0-9.3 1.8-12.9 5.4A17.6 17.6 0 0 0 0 82.2c0 5 1.8 9.3 5.4 12.9l128 127.9c3.6 3.6 7.8 5.4 12.8 5.4s9.2-1.8 12.8-5.4L287 95c3.5-3.5 5.4-7.8 5.4-12.8 0-5-1.9-9.2-5.5-12.8z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.8rem center;
+  background-size: 0.6em auto;
+  padding-right: 2.2rem;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilos para las opciones del select */
+.template-select option {
+  padding: 10px 15px;
+  background-color: var(--form-bg, rgba(10, 26, 36, 0.95));
+  color: var(--text-primary, #e0e0e0);
+  border: none;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+}
+
+/* Estilo para el hover de las opciones */
+.template-select option:hover,
+.template-select option:focus,
+.template-select option:checked {
+  background-color: var(--btn-primary, #2c5e80);
+  color: #fff;
+}
+
+/* Estilo para el scrollbar del select */
+.template-select::-webkit-scrollbar {
+  width: 8px;
+}
+
+.template-select::-webkit-scrollbar-track {
+  background: var(--input-bg, rgba(30, 58, 76, 0.5));
+  border-radius: 4px;
+}
+
+.template-select::-webkit-scrollbar-thumb {
+  background-color: var(--form-border, #1e3a4c);
+  border-radius: 4px;
+}
+
+.template-select::-webkit-scrollbar-thumb:hover {
+  background-color: var(--btn-primary, #3a7ca5);
+}
+
+.template-select:focus {
+  outline: none;
+  border-color: var(--input-focus, #3a7ca5);
+  box-shadow: 0 0 0 2px rgba(58, 124, 165, 0.3);
+  background-color: rgba(58, 124, 165, 0.1);
 }
 
 .template-preview {
   margin-top: 20px;
   text-align: center;
+  position: relative;
+  z-index: 1;
+  border: 1px solid var(--form-border, #1e3a4c);
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--input-bg, rgba(30, 58, 76, 0.5));
+  padding: 10px;
 }
 
 .template-preview img {
   max-width: 100%;
   height: auto;
-  border: 1px solid var(--color-primary-lighter);
   border-radius: 4px;
-  padding: 5px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease;
+}
+
+.template-preview img:hover {
+  transform: scale(1.02);
+}
+
+/* Animation for the underline effect */
+@keyframes signalPulse {
+  0% {
+    opacity: 0.3;
+    transform: scaleX(0.5);
+  }
+  50% {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+  100% {
+    opacity: 0.3;
+    transform: scaleX(0.5);
+  }
 }
