@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types'
+import '../styles/components/QSLGenerated.css'
 
 const QSLGenerated = ({ qslData, onDownload, onSend }) => {
   return (

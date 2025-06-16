@@ -38,7 +38,7 @@ const AboutDialog = ({ isOpen, onClose, appInfo }) => {
       <div className="about-modal">
         <div className="about-modal-header">
           <h2>Acerca de </h2>
-          <button className="close-button" onClick={onClose}>
+          <button className="btn close-button" onClick={onClose} aria-label="Cerrar">
             &times;
           </button>
         </div>

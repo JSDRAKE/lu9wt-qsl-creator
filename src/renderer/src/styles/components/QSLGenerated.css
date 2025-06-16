@@ -1,0 +1,20 @@
+/* QSLGenerated Component Styles */
+.qsl-generated {
+  background-color: white;
+  padding: 20px;
+  border-radius: 5px;
+  margin-top: 30px;
+  text-align: center;
+  border: 2px solid #6555d5;
+}
+
+.generated-image-container {
+  margin: 20px 0;
+}
+
+.generated-image-container img {
+  max-width: 100%;
+  height: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}

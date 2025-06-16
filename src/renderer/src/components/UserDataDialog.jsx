@@ -121,7 +121,7 @@ const UserDataDialog = ({ isOpen, onClose }) => {
       <div className="user-data-modal">
         <div className="modal-header">
           <h2>User Data</h2>
-          <button className="close-button" onClick={onClose}>
+          <button className="btn close-button" onClick={onClose} aria-label="Cerrar">
             &times;
           </button>
         </div>

@@ -1,0 +1,36 @@
+/* Base Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #559dd5;
+  font-family: Arial, sans-serif;
+  padding: 20px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin-top: 0;
+}
+
+h2 {
+  color: black;
+  text-align: center;
+  margin-top: 10px;
+  margin-bottom: 15px;
+}
+
+/* Container Styles */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.content {
+  display: grid;
+  grid-template-columns: 2fr 3fr;
+  gap: 30px;
+  margin-top: 20px;
+}

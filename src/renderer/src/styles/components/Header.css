@@ -1,0 +1,11 @@
+/* Header Component Styles */
+header {
+  /* Add any specific header styles here */
+}
+
+header h1 {
+  color: #fff;
+  text-align: center;
+  margin-top: 20px;
+  margin-bottom: 50px;
+}

@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types'
 import { useMemo } from 'react'
+import '../styles/components/QSLCardSelector.css'
 import templatesData from '../data/qslTemplates.json'
 
 // Import all QSL card images

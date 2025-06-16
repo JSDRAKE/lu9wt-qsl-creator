@@ -86,7 +86,7 @@ const SettingsDialog = ({ isOpen, onClose }) => {
       <div className="settings-modal">
         <div className="settings-header">
           <h2>Configuración</h2>
-          <button className="close-button" onClick={onClose}>
+          <button className="btn close-button" onClick={onClose} aria-label="Cerrar">
             &times;
           </button>
         </div>

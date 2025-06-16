@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import '../styles/components/EmailForm.css'
 
 const EmailForm = ({ onBack, onSubmit }) => {
   const [email, setEmail] = useState('')

@@ -1,0 +1,21 @@
+/* QSLCardSelector Component Styles */
+.qsl-card-selector {
+  background-color: white;
+  padding: 20px;
+  border-radius: 5px;
+  border: 2px solid #6555d5;
+  text-align: center;
+}
+
+.template-preview {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.template-preview img {
+  max-width: 100%;
+  height: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 5px;
+}

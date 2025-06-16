@@ -1,7 +1,8 @@
-import { useState } from 'react'
 import PropTypes from 'prop-types'
-import QSLGenerated from './QSLGenerated'
+import { useState } from 'react'
+import '../styles/components/QSLManager.css'
 import EmailForm from './EmailForm'
+import QSLGenerated from './QSLGenerated'
 
 const QSLManager = ({ generatedQSL, onSendEmail, onDownload }) => {
   const [showEmailForm, setShowEmailForm] = useState(false)
