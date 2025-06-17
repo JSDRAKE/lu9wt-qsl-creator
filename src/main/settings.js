@@ -4,31 +4,7 @@ import { app } from 'electron'
 
 const settingsPath = path.join(app.getPath('userData'), 'settings.json')
 
-const defaultSettings = {
-  // General Settings
-  theme: 'light',
-  language: 'es',
-  notifications: true,
-  // Profile Settings
-  profiles: [
-    {
-      id: '1',
-      name: 'Perfil Principal',
-      callsign: '',
-      fullName: '',
-      qth: '',
-      country: ''
-    }
-  ],
-  activeProfileId: '1',
-  // User Settings
-  email: '',
-  password: '',
-  rememberMe: true,
-  // External Service Settings
-  externalApiKey: '',
-  autoSync: false
-}
+// Default settings are now handled in the renderer process
 
 // Get all settings
 export const getSettings = async () => {
@@ -37,24 +13,34 @@ export const getSettings = async () => {
     return JSON.parse(data)
   } catch (error) {
     if (error.code === 'ENOENT') {
-      // File doesn't exist, return default settings
-      await saveSettings(defaultSettings)
-      return defaultSettings
+      // File doesn't exist, return null to indicate no settings
+      return null
     }
     console.error('Error reading settings:', error)
-    return defaultSettings
+    return null
   }
 }
 
 // Save all settings
 export const saveSettings = async (settings) => {
   try {
+    // Check if we have a valid settings object
+    if (!settings || typeof settings !== 'object') {
+      throw new Error('Invalid settings object')
+    }
+
+    // Ensure the directory exists
     await fs.mkdir(path.dirname(settingsPath), { recursive: true })
+
+    // Write the settings file
     await fs.writeFile(settingsPath, JSON.stringify(settings, null, 2), 'utf-8')
-    return settings
+    return { success: true }
   } catch (error) {
     console.error('Error saving settings:', error)
-    throw error
+    return {
+      success: false,
+      error: error.message || 'Error al guardar la configuración'
+    }
   }
 }
 
