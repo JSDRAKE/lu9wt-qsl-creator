@@ -22,11 +22,11 @@ const InitialSetupDialog = ({ isOpen, onClose, onConfigure }) => {
 
   return (
     <div className="initial-setup-dialog">
-      <div className="settings-modal">
-        <div className="settings-header">
+      <div className="modal-container">
+        <div className="modal-header">
           <h2>LU9WT QSL Creator</h2>
         </div>
-        <div className="settings-content">
+        <div className="modal-body">
           <div className="welcome-message">
             <div className="welcome-icon-container">
               <FiInfo className="welcome-icon" />
@@ -40,11 +40,11 @@ const InitialSetupDialog = ({ isOpen, onClose, onConfigure }) => {
             </div>
           </div>
         </div>
-        <div className="settings-footer">
-          <button className="settings-button secondary" onClick={onClose}>
+        <div className="modal-footer">
+          <button className="btn btn-secondary" onClick={onClose}>
             Cerrar
           </button>
-          <button className="settings-button primary" onClick={onConfigure}>
+          <button className="btn btn-primary" onClick={onConfigure}>
             <FiSettings className="button-icon" /> Configurar Ahora
           </button>
         </div>
