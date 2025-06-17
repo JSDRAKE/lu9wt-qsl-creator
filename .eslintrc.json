@@ -1,0 +1,10 @@
+{
+  "extends": [
+    "@electron-toolkit/eslint-config",
+    "@electron-toolkit/eslint-config-prettier"
+  ],
+  "rules": {
+    "linebreak-style": ["error", "unix"],
+    "eol-last": ["error", "always"]
+  }
+}
