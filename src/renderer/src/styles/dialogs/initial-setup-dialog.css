@@ -1,0 +1,341 @@
+/* Initial Setup Dialog - Matching App Theme */
+.initial-setup-dialog {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+.settings-modal {
+  background: var(--form-bg, rgba(10, 26, 36, 0.95));
+  border: 1px solid var(--form-border, #1e3a4c);
+  border-radius: 8px;
+  width: 100%;
+  max-width: 420px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+  color: var(--text-primary, #e0e0e0);
+}
+
+/* Grid background effect */
+.settings-modal::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background:
+    linear-gradient(rgba(58, 124, 165, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(58, 124, 165, 0.05) 1px, transparent 1px);
+  background-size: 20px 20px;
+  opacity: 0.5;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.settings-header {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--form-border, #1e3a4c);
+  background: var(--header-bg, rgba(15, 35, 50, 0.9));
+  text-align: center;
+}
+
+.settings-header h2 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--text-primary, #e0e0e0);
+  letter-spacing: 0.3px;
+}
+
+.initial-setup-dialog .settings-close-button {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--text-secondary, #8a9ba8);
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  position: relative;
+  z-index: 1;
+}
+
+.initial-setup-dialog .settings-close-button:hover {
+  background-color: var(--hover-bg, rgba(255, 255, 255, 0.1));
+  color: var(--text-primary, #e0e0e0);
+  transform: rotate(90deg);
+}
+
+.settings-content {
+  padding: 1.5rem;
+  flex-grow: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.initial-setup-dialog .welcome-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  width: 100%;
+  margin: 0;
+}
+
+.welcome-icon-container {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--primary, #3a7ca5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  margin-bottom: 0.5rem;
+}
+
+.welcome-icon {
+  font-size: 1.5rem;
+  color: white;
+}
+
+.welcome-text h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: var(--text-primary, #e0e0e0);
+  line-height: 1.3;
+}
+
+.welcome-text p {
+  margin: 0 0 1.25rem;
+  color: var(--text-secondary, #8a9ba8);
+  line-height: 1.5;
+  font-size: 0.9rem;
+  max-width: 100%;
+}
+
+.settings-footer {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--form-border, #1e3a4c);
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  background: var(--footer-bg, rgba(15, 35, 50, 0.9));
+}
+
+.settings-button {
+  padding: 0.5rem 1.25rem;
+  border-radius: 4px;
+  font-weight: 500;
+  font-size: 0.85rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+  min-width: 100px;
+  justify-content: center;
+}
+
+.initial-setup-dialog .settings-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+  z-index: -1;
+}
+
+.initial-setup-dialog .settings-button:hover::before {
+  width: 100%;
+}
+
+.initial-setup-dialog .settings-button.primary {
+  background: linear-gradient(
+    135deg,
+    var(--primary, #3a7ca5) 0%,
+    var(--primary-dark, #2c5d7d) 100%
+  );
+  color: white;
+  border: none;
+  box-shadow: 0 4px 15px rgba(58, 124, 165, 0.4);
+}
+
+.initial-setup-dialog .settings-button.primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(58, 124, 165, 0.6);
+}
+
+.initial-setup-dialog .settings-button.secondary {
+  background: transparent;
+  color: var(--text-secondary, #8a9ba8);
+  border: 2px solid var(--form-border, #1e3a4c);
+}
+
+.initial-setup-dialog .settings-button.secondary:hover {
+  background: var(--hover-bg, rgba(255, 255, 255, 0.05));
+  color: var(--text-primary, #e0e0e0);
+  border-color: var(--primary, #3a7ca5);
+}
+
+.button-icon {
+  font-size: 1.1rem;
+  transition: transform 0.3s ease;
+}
+
+.initial-setup-dialog .settings-button:hover .button-icon {
+  transform: translateX(3px);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .initial-setup-dialog .settings-modal {
+    width: 95%;
+    max-height: 95vh;
+    margin: 0;
+  }
+
+  .initial-setup-dialog .settings-header {
+    padding: 1.25rem 1.5rem;
+  }
+
+  .initial-setup-dialog .settings-header h2 {
+    font-size: 1.25rem;
+  }
+
+  .initial-setup-dialog .settings-content {
+    padding: 1.5rem 1.25rem;
+  }
+
+  .initial-setup-dialog .welcome-icon-container {
+    width: 70px;
+    height: 70px;
+  }
+
+  .initial-setup-dialog .welcome-icon {
+    font-size: 2rem;
+  }
+
+  .initial-setup-dialog .welcome-text h3 {
+    font-size: 1.5rem;
+  }
+
+  .initial-setup-dialog .welcome-text p {
+    font-size: 1rem;
+  }
+
+  .initial-setup-dialog .settings-footer {
+    padding: 1.25rem 1.5rem;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .initial-setup-dialog .settings-button {
+    width: 100%;
+    justify-content: center;
+    padding: 0.75rem;
+  }
+}
+
+.welcome-icon {
+  font-size: 3rem;
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+}
+
+.welcome-message p {
+  margin: 0.5rem 0;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.modal-footer {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+.btn {
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-weight: 500;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s;
+  border: 1px solid transparent;
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-dark);
+  border-color: var(--primary-dark);
+}
+
+.btn-secondary {
+  background-color: var(--background-color);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+}
+
+.btn-secondary:hover {
+  background-color: var(--hover-bg);
+}
+
+.icon {
+  font-size: 1rem;
+}
