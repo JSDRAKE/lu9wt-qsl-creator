@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 
-export const useAppInitialization = (setAppInfo) => {
+export const useAppInitialization = (setAppInfo, onInitialized) => {
   useEffect(() => {
     const loadAppInfo = async () => {
       if (!window.electron?.ipcRenderer) return
@@ -12,8 +12,15 @@ export const useAppInitialization = (setAppInfo) => {
       }
     }
 
-    loadAppInfo()
-  }, [setAppInfo])
+    const initializeApp = async () => {
+      await loadAppInfo()
+      if (typeof onInitialized === 'function') {
+        await onInitialized()
+      }
+    }
+
+    initializeApp()
+  }, [setAppInfo, onInitialized])
 
   return {}
 }
