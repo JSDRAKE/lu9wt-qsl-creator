@@ -3,11 +3,11 @@ import { app, BrowserWindow, ipcMain, Menu, shell } from 'electron'
 import { dirname, join } from 'path'
 import { fileURLToPath } from 'url'
 import { getUserData, saveUserData } from './userData.js'
+import { getSettings, saveSettings } from './settings.js'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 const icon = join(__dirname, '../../resources/icon.png')
-const packageInfo = require('../../package.json')
 
 function createWindow() {
   // Create the browser window.
@@ -101,16 +101,6 @@ function createMenu() {
         },
         { type: 'separator' },
         {
-          label: 'Datos del usuario',
-          click: () => {
-            const focusedWindow = BrowserWindow.getFocusedWindow()
-            if (focusedWindow) {
-              focusedWindow.webContents.send('menu-user-data')
-            }
-          }
-        },
-        { type: 'separator' },
-        {
           label: 'Configuración',
           accelerator: 'CmdOrCtrl+,',
           click: () => {
@@ -121,7 +111,7 @@ function createMenu() {
           }
         },
         { type: 'separator' },
-        { role: 'close', label: 'Close Window' }
+        { role: 'close', label: 'Salir' }
       ]
     },
 
@@ -220,35 +210,24 @@ app.whenReady().then(() => {
 
   // Manejar la solicitud de información de la aplicación
   ipcMain.handle('get-app-info', () => ({
-    name: packageInfo.name,
-    displayName: packageInfo.displayName || packageInfo.name,
-    version: packageInfo.version,
-    description: packageInfo.description,
-    author: packageInfo.author,
-    homepage: packageInfo.homepage,
-    bugs: packageInfo.bugs?.url || packageInfo.bugs,
-    license: packageInfo.license
+    appName: app.name,
+    appVersion: app.getVersion(),
+    appPath: app.getAppPath(),
+    userDataPath: app.getPath('userData')
   }))
 
-  // User data handlers
+  // Handle user data operations
   ipcMain.handle('check-user-data', async () => {
     try {
       const data = await getUserData()
-      return { success: true, data }
+      return { exists: true, data }
     } catch (error) {
-      console.error('Error checking user data:', error)
-      return { success: false, error: error.message }
+      return { exists: false, error: error.message }
     }
   })
 
   ipcMain.handle('get-user-data', async () => {
-    try {
-      const data = await getUserData()
-      return { success: true, data }
-    } catch (error) {
-      console.error('Error in get-user-data:', error)
-      return { success: false, error: error.message }
-    }
+    return await getUserData()
   })
 
   ipcMain.handle('save-user-data', async (event, data) => {
@@ -261,21 +240,25 @@ app.whenReady().then(() => {
     }
   })
 
-  // Manejar la solicitud de configuración
-  ipcMain.handle('get-settings', () => {
-    // Aquí puedes cargar la configuración desde un archivo o base de datos
-    return {
-      theme: 'light',
-      language: 'es',
-      autoSave: true,
-      autoUpdate: true
+  // Handle settings operations
+  ipcMain.handle('get-settings', async () => {
+    try {
+      const settings = await getSettings()
+      return { success: true, data: settings }
+    } catch (error) {
+      console.error('Error getting settings:', error)
+      return { success: false, error: error.message }
     }
   })
 
-  ipcMain.handle('save-settings', (_, settings) => {
-    // Aquí puedes guardar la configuración en un archivo o base de datos
-    console.log('Configuración guardada:', settings)
-    return { success: true }
+  ipcMain.handle('save-settings', async (_, settings) => {
+    try {
+      const savedSettings = await saveSettings(settings)
+      return { success: true, data: savedSettings }
+    } catch (error) {
+      console.error('Error saving settings:', error)
+      return { success: false, error: error.message }
+    }
   })
 
   createWindow()
