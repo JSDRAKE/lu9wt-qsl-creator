@@ -1,22 +1,126 @@
 import PropTypes from 'prop-types'
 import { useCallback, useEffect, useState } from 'react'
-import { FiX, FiSave, FiRotateCw } from 'react-icons/fi'
+import {
+  FiEdit,
+  FiGlobe,
+  FiRotateCw,
+  FiSave,
+  FiSettings,
+  FiTrash2,
+  FiUser,
+  FiUserCheck,
+  FiUserPlus,
+  FiX
+} from 'react-icons/fi'
 import '../styles/dialogs/settings-dialog.css'
 
 const SettingsDialog = ({ isOpen, onClose }) => {
+  const [isCreatingProfile, setIsCreatingProfile] = useState(false)
+  const [newProfileName, setNewProfileName] = useState('')
   const [settings, setSettings] = useState({
+    // General Settings
     theme: 'light',
     language: 'es',
-    autoSave: true,
-    autoUpdate: true
+    notifications: true,
+    // Profile Settings
+    profiles: [
+      {
+        id: '1',
+        name: 'Perfil Principal',
+        callsign: '',
+        fullName: '',
+        qth: '',
+        country: ''
+      },
+      {
+        id: '2',
+        name: 'Perfil Secundario',
+        callsign: 'LU9WT',
+        fullName: 'Juan',
+        qth: 'Buenos Aires',
+        country: 'Argentina'
+      }
+    ],
+    activeProfileId: '1',
+    // User Settings
+    email: '',
+    password: '',
+    rememberMe: true,
+    // External Service Settings
+    externalApiKey: '',
+    autoSync: false,
+    syncInterval: 60
   })
   const [isLoading, setIsLoading] = useState(true)
   const [activeTab, setActiveTab] = useState('general')
 
-  // Cerrar con la tecla ESC
+  // Move profile functions to the component level
+  const handleProfileChange = (e) => {
+    setSettings((prev) => ({
+      ...prev,
+      activeProfileId: e.target.value
+    }))
+  }
+
+  const handleNewProfile = () => {
+    setIsCreatingProfile(true)
+    setNewProfileName(`Perfil ${settings.profiles.length + 1}`)
+  }
+
+  const handleSaveNewProfile = () => {
+    if (!newProfileName.trim()) return
+
+    const newProfile = {
+      id: Date.now().toString(),
+      name: newProfileName.trim(),
+      callsign: '',
+      fullName: '',
+      qth: '',
+      country: ''
+    }
+
+    setSettings((prev) => ({
+      ...prev,
+      profiles: [...prev.profiles, newProfile],
+      activeProfileId: newProfile.id
+    }))
+
+    setIsCreatingProfile(false)
+    setNewProfileName('')
+  }
+
+  const handleCancelNewProfile = () => {
+    setIsCreatingProfile(false)
+    setNewProfileName('')
+  }
+
+  const handleDeleteProfile = () => {
+    if (settings.profiles.length <= 1) {
+      alert('No se puede eliminar el último perfil')
+      return
+    }
+    setSettings((prev) => ({
+      ...prev,
+      profiles: prev.profiles.filter((p) => p.id !== prev.activeProfileId),
+      activeProfileId: prev.profiles[0].id
+    }))
+  }
+
+  const handleEditProfile = () => {
+    const currentProfile = settings.profiles.find((p) => p.id === settings.activeProfileId)
+    if (!currentProfile) return
+    const newName = prompt('Nuevo nombre para el perfil:', currentProfile.name)
+    if (!newName || newName === currentProfile.name) return
+    setSettings((prev) => ({
+      ...prev,
+      profiles: prev.profiles.map((p) =>
+        p.id === prev.activeProfileId ? { ...p, name: newName } : p
+      )
+    }))
+  }
+
   const handleKeyDown = useCallback((e) => e.key === 'Escape' && onClose(), [onClose])
 
-  // Configurar eventos de teclado y scroll
   useEffect(() => {
     if (!isOpen) return
 
@@ -85,11 +189,287 @@ const SettingsDialog = ({ isOpen, onClose }) => {
     )
   }
 
+  const renderTabContent = () => {
+    switch (activeTab) {
+      case 'general':
+        return (
+          <div className="tab-content" id="general-tabpanel">
+            <div className="form-group">
+              <label htmlFor="theme">Tema</label>
+              <select
+                id="theme"
+                name="theme"
+                value={settings.theme}
+                onChange={handleInputChange}
+                className="form-select"
+              >
+                <option value="light">Claro</option>
+                <option value="dark">Oscuro</option>
+                <option value="system">Sistema</option>
+              </select>
+            </div>
+            <div className="form-group">
+              <label htmlFor="language">Idioma</label>
+              <select
+                id="language"
+                name="language"
+                value={settings.language}
+                onChange={handleInputChange}
+                className="form-select"
+              >
+                <option value="es">Español</option>
+                <option value="en">English</option>
+              </select>
+            </div>
+          </div>
+        )
+
+      case 'profile':
+        return (
+          <div className="tab-content profile-tab" id="profile-tabpanel">
+            <div className="form-group">
+              <label htmlFor="profile-selector">Seleccionar Perfil</label>
+              <div className="profile-selector">
+                <div className="profile-selector-container">
+                  <select
+                    id="profile-selector"
+                    value={settings.activeProfileId}
+                    onChange={handleProfileChange}
+                    className="form-select"
+                  >
+                    {settings.profiles.map((profile) => (
+                      <option key={profile.id} value={profile.id}>
+                        {profile.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="profile-actions">
+                  <div className="profile-actions-row">
+                    <button
+                      type="button"
+                      className="btn btn-small btn-primary btn-icon"
+                      onClick={() => {}}
+                      title="Activar perfil"
+                      disabled={isCreatingProfile}
+                    >
+                      <FiUserCheck />
+                      <span>Activar</span>
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-small btn-success btn-icon"
+                      onClick={handleNewProfile}
+                      title="Nuevo perfil"
+                      disabled={isCreatingProfile}
+                    >
+                      <FiUserPlus />
+                      <span>Nuevo</span>
+                    </button>
+                  </div>
+                  <div className="profile-actions-row">
+                    <button
+                      type="button"
+                      className="btn btn-small btn-icon"
+                      onClick={handleEditProfile}
+                      title="Editar nombre del perfil"
+                      disabled={isCreatingProfile}
+                    >
+                      <FiEdit />
+                      <span>Editar</span>
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-small btn-danger btn-icon"
+                      onClick={handleDeleteProfile}
+                      disabled={settings.profiles.length <= 1 || isCreatingProfile}
+                      title="Eliminar perfil"
+                    >
+                      <FiTrash2 />
+                      <span>Borrar</span>
+                    </button>
+                  </div>
+                </div>
+                {isCreatingProfile && (
+                  <div className="new-profile-input" style={{ marginTop: '1rem' }}>
+                    <input
+                      type="text"
+                      className="form-control input-sm"
+                      value={newProfileName}
+                      onChange={(e) => setNewProfileName(e.target.value)}
+                      placeholder="Nombre del perfil"
+                      autoFocus
+                      style={{ width: '100%', marginBottom: '0.5rem' }}
+                      onKeyDown={(e) => e.key === 'Enter' && handleSaveNewProfile()}
+                    />
+                    <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
+                      <button
+                        type="button"
+                        className="btn btn-small btn-success btn-icon"
+                        onClick={handleSaveNewProfile}
+                        title="Guardar perfil"
+                        disabled={!newProfileName.trim()}
+                      >
+                        <FiSave />
+                        <span>Guardar</span>
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-small btn-icon"
+                        onClick={handleCancelNewProfile}
+                        title="Cancelar"
+                      >
+                        <FiX />
+                        <span>Cancelar</span>
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )
+
+      case 'user':
+        return (
+          <div className="tab-content" id="user-tabpanel">
+            <div className="form-group">
+              <label htmlFor="callsign">Indicativo</label>
+              <input
+                type="text"
+                id="callsign"
+                name="callsign"
+                value={settings.callsign || ''}
+                onChange={handleInputChange}
+                className="form-input"
+                placeholder="Ej: LU9WT"
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="name">Nombre</label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                value={settings.name || ''}
+                onChange={handleInputChange}
+                className="form-input"
+                placeholder="Nombre completo"
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="city">Ciudad</label>
+              <input
+                type="text"
+                id="city"
+                name="city"
+                value={settings.city || ''}
+                onChange={handleInputChange}
+                className="form-input"
+                placeholder="Ej: Buenos Aires"
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="gridLocator">Grid Locator</label>
+              <input
+                type="text"
+                id="gridLocator"
+                name="gridLocator"
+                value={settings.gridLocator || ''}
+                onChange={handleInputChange}
+                className="form-input"
+                placeholder="Ej: GF05tj"
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="email">Correo electrónico</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                value={settings.email || ''}
+                onChange={handleInputChange}
+                className="form-input"
+                placeholder="tu@email.com"
+              />
+            </div>
+          </div>
+        )
+
+      case 'external':
+        return (
+          <div className="tab-content" id="external-tabpanel">
+            <div className="service-credentials">
+              <h4>QRZ.com</h4>
+              <div className="form-group">
+                <label htmlFor="qrzUsername">Usuario</label>
+                <input
+                  type="text"
+                  id="qrzUsername"
+                  name="qrzUsername"
+                  value={settings.qrzUsername || ''}
+                  onChange={handleInputChange}
+                  className="form-input"
+                  placeholder="Usuario de QRZ.com"
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="qrzPassword">Contraseña</label>
+                <input
+                  type="password"
+                  id="qrzPassword"
+                  name="qrzPassword"
+                  value={settings.qrzPassword || ''}
+                  onChange={handleInputChange}
+                  className="form-input"
+                  placeholder="Contraseña de QRZ.com"
+                />
+              </div>
+            </div>
+
+            <div className="service-credentials" style={{ marginTop: '1.5rem' }}>
+              <h4>HamQTH.com</h4>
+              <div className="form-group">
+                <label htmlFor="hamqthUsername">Usuario</label>
+                <input
+                  type="text"
+                  id="hamqthUsername"
+                  name="hamqthUsername"
+                  value={settings.hamqthUsername || ''}
+                  onChange={handleInputChange}
+                  className="form-input"
+                  placeholder="Usuario de HamQTH.com"
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="hamqthPassword">Contraseña</label>
+                <input
+                  type="password"
+                  id="hamqthPassword"
+                  name="hamqthPassword"
+                  value={settings.hamqthPassword || ''}
+                  onChange={handleInputChange}
+                  className="form-input"
+                  placeholder="Contraseña de HamQTH.com"
+                />
+              </div>
+            </div>
+          </div>
+        )
+
+      default:
+        return null
+    }
+  }
+
   return (
     <div className="settings-modal-overlay">
       <div className="settings-modal">
         <div className="settings-header">
           <h2>CONFIGURACIÓN</h2>
+          <button className="close-button" onClick={onClose} aria-label="Cerrar">
+            <FiX />
+          </button>
         </div>
 
         <div className="settings-tabs">
@@ -101,117 +481,66 @@ const SettingsDialog = ({ isOpen, onClose }) => {
             id="general-tab"
             role="tab"
           >
-            GENERAL
+            <FiSettings className="tab-icon" />
+            <span>General</span>
           </button>
           <button
-            className={`tab-button ${activeTab === 'advanced' ? 'active' : ''}`}
-            onClick={() => setActiveTab('advanced')}
-            aria-selected={activeTab === 'advanced'}
-            aria-controls="advanced-tabpanel"
-            id="advanced-tab"
+            className={`tab-button ${activeTab === 'profile' ? 'active' : ''}`}
+            onClick={() => setActiveTab('profile')}
+            aria-selected={activeTab === 'profile'}
+            aria-controls="profile-tabpanel"
+            id="profile-tab"
             role="tab"
           >
-            AVANZADO
+            <FiUser className="tab-icon" />
+            <span>Perfil</span>
+          </button>
+          <button
+            className={`tab-button ${activeTab === 'user' ? 'active' : ''}`}
+            onClick={() => setActiveTab('user')}
+            aria-selected={activeTab === 'user'}
+            aria-controls="user-tabpanel"
+            id="user-tab"
+            role="tab"
+          >
+            <FiUserCheck className="tab-icon" />
+            <span>Usuario</span>
+          </button>
+          <button
+            className={`tab-button ${activeTab === 'external' ? 'active' : ''}`}
+            onClick={() => setActiveTab('external')}
+            aria-selected={activeTab === 'external'}
+            aria-controls="external-tabpanel"
+            id="external-tab"
+            role="tab"
+          >
+            <FiGlobe className="tab-icon" />
+            <span>Servicio Externo</span>
           </button>
         </div>
 
-        <div className="settings-content">
-          <div className="settings-content">
-            {activeTab === 'general' && (
-              <div
-                className="settings-section"
-                id="general-tabpanel"
-                role="tabpanel"
-                aria-labelledby="general-tab"
-              >
-                <h3>APARIENCIA</h3>
-                <div className="form-group">
-                  <label htmlFor="theme">Tema</label>
-                  <select
-                    id="theme"
-                    name="theme"
-                    value={settings.theme}
-                    onChange={handleInputChange}
-                    aria-label="Seleccionar tema"
-                  >
-                    <option value="light">Claro</option>
-                    <option value="dark">Oscuro</option>
-                    <option value="system">Sistema</option>
-                  </select>
-                </div>
-
-                <div className="form-group">
-                  <label htmlFor="language">Idioma</label>
-                  <select
-                    id="language"
-                    name="language"
-                    value={settings.language}
-                    onChange={handleInputChange}
-                    aria-label="Seleccionar idioma"
-                  >
-                    <option value="es">Español</option>
-                    <option value="en">English</option>
-                  </select>
-                </div>
-
-                <div className="form-group">
-                  <h3>PREFERENCIAS</h3>
-                  <div className="checkbox-group">
-                    <input
-                      type="checkbox"
-                      id="autoSave"
-                      name="autoSave"
-                      checked={settings.autoSave}
-                      onChange={handleInputChange}
-                      aria-label="Activar guardado automático"
-                    />
-                    <label htmlFor="autoSave">Guardado automático</label>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {activeTab === 'advanced' && (
-              <div
-                className="settings-section"
-                id="advanced-tabpanel"
-                role="tabpanel"
-                aria-labelledby="advanced-tab"
-              >
-                <h3>ACTUALIZACIONES</h3>
-                <div className="form-group">
-                  <div className="checkbox-group">
-                    <input
-                      type="checkbox"
-                      id="autoUpdate"
-                      name="autoUpdate"
-                      checked={settings.autoUpdate}
-                      onChange={handleInputChange}
-                      aria-label="Buscar actualizaciones automáticamente"
-                    />
-                    <label htmlFor="autoUpdate">Buscar actualizaciones automáticamente</label>
-                  </div>
-                  <p className="settings-note">
-                    Reinicia la aplicación para aplicar los cambios en la configuración avanzada.
-                  </p>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
+        <div className="settings-content">{renderTabContent()}</div>
 
         <div className="settings-footer">
-          <button className="btn btn-secondary" onClick={onClose} aria-label="Cancelar y cerrar">
+          <button
+            type="button"
+            className="btn btn-secondary"
+            onClick={onClose}
+            disabled={isLoading}
+            aria-label="Cancelar y cerrar"
+          >
             <FiX className="btn-icon" />
             <span>CANCELAR</span>
           </button>
           <button
+            type="button"
             className="btn btn-primary"
             onClick={handleSave}
+            disabled={isLoading}
             aria-label="Guardar configuración"
           >
-            <FiSave className="btn-icon" />
-            <span>GUARDAR CAMBIOS</span>
+            {isLoading ? <FiRotateCw className="btn-icon spin" /> : <FiSave className="btn-icon" />}
+            <span>{isLoading ? 'GUARDANDO...' : 'GUARDAR CAMBIOS'}</span>
           </button>
         </div>
       </div>
