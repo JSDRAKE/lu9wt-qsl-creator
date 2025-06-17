@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 // IPC is now handled through the preload script
 import {
   FiEdit,
@@ -34,18 +34,40 @@ const SettingsDialog = ({ isOpen, onClose }) => {
     syncInterval: 60
   })
 
-  // Load settings when component mounts
+  // Default settings
+  const defaultSettings = useMemo(
+    () => ({
+      theme: 'light',
+      language: 'es',
+      notifications: true,
+      profiles: [],
+      activeProfileId: '',
+      email: '',
+      password: '',
+      rememberMe: true,
+      externalApiKey: '',
+      autoSync: false,
+      syncInterval: 60
+    }),
+    []
+  )
+
+  // Load settings when component mounts or when isOpen changes
   useEffect(() => {
     const loadSettings = async () => {
       try {
         const response = await window.api.getSettings()
-        if (response.success) {
-          setSettings(response.data)
+        if (response && response.success && response.data) {
+          // Merge with defaults to ensure all required fields are present
+          setSettings({ ...defaultSettings, ...response.data })
         } else {
-          console.error('Error loading settings:', response.error)
+          // Use default settings if no settings file exists
+          setSettings(defaultSettings)
         }
       } catch (error) {
         console.error('Failed to load settings:', error)
+        // Use default settings if there's an error
+        setSettings(defaultSettings)
       } finally {
         setIsLoading(false)
       }
@@ -54,7 +76,7 @@ const SettingsDialog = ({ isOpen, onClose }) => {
     if (isOpen) {
       loadSettings()
     }
-  }, [isOpen])
+  }, [isOpen, defaultSettings])
 
   // Save settings whenever they change
   const saveSettings = useCallback(async (newSettings) => {
