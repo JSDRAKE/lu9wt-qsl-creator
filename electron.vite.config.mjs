@@ -15,6 +15,20 @@ export default defineConfig({
         '@renderer': resolve('src/renderer/src')
       }
     },
-    plugins: [react()]
+    plugins: [react()],
+    define: {
+      // Expose process.env to the renderer process
+      'process.env': {}
+    },
+    build: {
+      rollupOptions: {
+        external: ['electron'],
+        output: {
+          // This will make sure our preload script works correctly
+          format: 'es',
+          inlineDynamicImports: true
+        }
+      }
+    }
   }
 })
