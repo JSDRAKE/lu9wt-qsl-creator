@@ -10,14 +10,16 @@ const settingsPath = path.join(app.getPath('userData'), 'settings.json')
 export const getSettings = async () => {
   try {
     const data = await fs.readFile(settingsPath, 'utf-8')
-    return JSON.parse(data)
+    const settings = JSON.parse(data)
+    // Return in the expected format
+    return { success: true, data: settings }
   } catch (error) {
     if (error.code === 'ENOENT') {
       // File doesn't exist, return null to indicate no settings
-      return null
+      return { success: true, data: null }
     }
     console.error('Error reading settings:', error)
-    return null
+    return { success: false, error: error.message }
   }
 }
 
