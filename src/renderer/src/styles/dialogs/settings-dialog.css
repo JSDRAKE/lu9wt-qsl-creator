@@ -19,9 +19,8 @@
   background: var(--form-bg, rgba(10, 26, 36, 0.9));
   border: 1px solid var(--form-border, #1e3a4c);
   border-radius: 30px;
-  width: 100%;
-  max-width: 600px;
-  max-height: 90vh;
+  width: 750px;
+  height: 650px;
   display: flex;
   flex-direction: column;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
@@ -29,6 +28,7 @@
   animation: slideIn 0.3s ease-out;
   position: relative;
   color: var(--text-primary, #e0e0e0);
+  margin: 20px;
 }
 
 /* Grid background effect */
@@ -92,6 +92,7 @@
   background: rgba(30, 58, 76, 0.3);
   position: relative;
   padding: 0;
+  flex-shrink: 0;
 }
 
 .tab-button {
@@ -109,6 +110,17 @@
   text-transform: uppercase;
   position: relative;
   overflow: hidden;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.tab-icon {
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+  width: 1.25rem;
+  text-align: center;
 }
 
 .tab-button:hover {
@@ -116,10 +128,30 @@
   background: rgba(58, 124, 165, 0.2);
 }
 
+.tab-button:focus {
+  outline: none;
+  background: rgba(58, 124, 165, 0.25);
+  box-shadow: 0 0 0 2px rgba(58, 124, 165, 0.5);
+  border-radius: 4px 4px 0 0;
+}
+
 .tab-button.active {
   color: #fff;
+  background: rgba(58, 124, 165, 0.3);
   border-bottom-color: var(--btn-primary, #3a7ca5);
   text-shadow: 0 0 10px rgba(0, 255, 157, 0.5);
+  position: relative;
+}
+
+.tab-button.active::after {
+  content: '';
+  position: absolute;
+  bottom: -3px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--btn-primary, #3a7ca5);
+  box-shadow: 0 0 10px rgba(0, 255, 157, 0.5);
 }
 
 .settings-content {
@@ -127,6 +159,7 @@
   overflow-y: auto;
   flex: 1;
   position: relative;
+  min-height: 0; /* Fix for flex children overflow */
 }
 
 .settings-section {
@@ -161,19 +194,33 @@
   position: relative;
 }
 
-.form-group label {
+/* Form group styles */
+.form-group {
+  margin-bottom: 1.5rem;
+  position: relative;
+}
+
+/* Label styles with increased specificity */
+.settings-modal .settings-content .form-group > label,
+.settings-modal .form-group > label,
+.settings-content .form-group > label,
+#settings-dialog .form-group > label,
+.settings-dialog .form-group > label {
   display: block;
-  margin-bottom: 0.5rem;
-  font-weight: 600;
-  color: var(--text-secondary, #8fbcbb);
-  font-size: 0.9rem;
+  margin-bottom: 2px;
+  color: var(--text-secondary);
   font-family: 'Courier New', monospace;
-  letter-spacing: 0.5px;
+  font-size: 0.9rem;
+  letter-spacing: 1px;
   text-transform: uppercase;
+  font-weight: normal;
+  line-height: 1.2;
 }
 
 .form-group input[type="text"],
 .form-group input[type="number"],
+.form-group input[type="email"],
+.form-group input[type="password"],
 .form-group select {
   width: 100%;
   padding: 0.75rem 1rem;
@@ -189,11 +236,105 @@
 
 .form-group input[type="text"]:focus,
 .form-group input[type="number"]:focus,
+.form-group input[type="email"]:focus,
+.form-group input[type="password"]:focus,
 .form-group select:focus {
   outline: none;
   border-color: var(--btn-primary, #3a7ca5);
   box-shadow: 0 0 0 2px rgba(58, 124, 165, 0.3);
   background-color: rgba(58, 124, 165, 0.1);
+}
+
+/* Profile Actions */
+.profile-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.profile-actions-row {
+  display: flex;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+  cursor: pointer;
+  font-family: 'Courier New', monospace;
+  letter-spacing: 0.5px;
+  line-height: 1;
+}
+
+.btn-small {
+  padding: 0.4rem 0.8rem;
+  font-size: 0.8rem;
+  flex: 1;
+}
+
+.btn-primary {
+  background-color: var(--btn-primary, #3a7ca5);
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: var(--btn-primary-hover, #4d9acc);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(58, 124, 165, 0.3);
+}
+
+.btn-success {
+  background-color: var(--btn-success, #2e7d32);
+  color: white;
+}
+
+.btn-success:hover {
+  background-color: var(--btn-success-hover, #3d8b40);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(46, 125, 50, 0.3);
+}
+
+.btn-danger {
+  background-color: var(--btn-danger, #c62828);
+  color: white;
+}
+
+.btn-danger:hover:not(:disabled) {
+  background-color: var(--btn-danger-hover, #d32f2f);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(198, 40, 40, 0.3);
+}
+
+.btn-danger:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-icon svg {
+  font-size: 1rem;
+}
+
+/* Profile Selector */
+.profile-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.profile-details {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--form-border, #1e3a4c);
 }
 
 /* Custom select arrow */
@@ -311,6 +452,23 @@
   letter-spacing: 1px;
   text-transform: uppercase;
   border: 1px solid transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-width: 180px;
+  position: relative;
+  width: auto;
+  height: 40px;
+  line-height: 1;
+}
+
+.btn span {
+  display: inline-block;
+  width: 100%;
+  text-align: center;
+  margin: 0;
+  padding: 0;
 }
 
 .btn-primary {
@@ -383,18 +541,21 @@
 }
 
 /* Responsive adjustments */
-@media (max-width: 640px) {
+@media (max-width: 800px) {
   .settings-modal {
     width: 95%;
-    max-height: 90vh;
+    max-width: none;
+    height: 90%;
+    margin: 20px auto;
+  }
+  
+  .tab-button {
+    padding: 0.8rem 1rem;
+    font-size: 0.8rem;
   }
   
   .settings-content {
-    padding: 16px;
-  }
-  
-  .settings-tabs {
-    padding: 0 16px;
+    padding: 1rem;
   }
   
   .settings-header,
