@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types'
 import { useCallback, useEffect, useState } from 'react'
+// IPC is now handled through the preload script
 import {
   FiEdit,
   FiGlobe,
@@ -16,55 +17,124 @@ import '../styles/dialogs/settings-dialog.css'
 
 const SettingsDialog = ({ isOpen, onClose }) => {
   const [isCreatingProfile, setIsCreatingProfile] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
   const [newProfileName, setNewProfileName] = useState('')
   const [settings, setSettings] = useState({
-    // General Settings
+    // Default settings (will be overridden by loaded settings)
     theme: 'light',
     language: 'es',
     notifications: true,
-    // Profile Settings
-    profiles: [
-      {
-        id: '1',
-        name: 'Perfil Principal',
-        callsign: '',
-        fullName: '',
-        qth: '',
-        country: ''
-      },
-      {
-        id: '2',
-        name: 'Perfil Secundario',
-        callsign: 'LU9WT',
-        fullName: 'Juan',
-        qth: 'Buenos Aires',
-        country: 'Argentina'
-      }
-    ],
-    activeProfileId: '1',
-    // User Settings
+    profiles: [],
+    activeProfileId: '',
     email: '',
     password: '',
     rememberMe: true,
-    // External Service Settings
     externalApiKey: '',
     autoSync: false,
     syncInterval: 60
   })
-  const [isLoading, setIsLoading] = useState(true)
-  const [activeTab, setActiveTab] = useState('general')
 
-  // Move profile functions to the component level
-  const handleProfileChange = (e) => {
-    setSettings((prev) => ({
-      ...prev,
-      activeProfileId: e.target.value
-    }))
-  }
+  // Load settings when component mounts
+  useEffect(() => {
+    const loadSettings = async () => {
+      try {
+        const response = await window.api.getSettings()
+        if (response.success) {
+          setSettings(response.data)
+        } else {
+          console.error('Error loading settings:', response.error)
+        }
+      } catch (error) {
+        console.error('Failed to load settings:', error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    if (isOpen) {
+      loadSettings()
+    }
+  }, [isOpen])
+
+  // Save settings whenever they change
+  const saveSettings = useCallback(async (newSettings) => {
+    try {
+      const response = await window.api.saveSettings(newSettings)
+      if (!response.success) {
+        console.error('Error saving settings:', response.error)
+        return false
+      }
+      return true
+    } catch (error) {
+      console.error('Failed to save settings:', error)
+      return false
+    }
+  }, [])
+
+  // Update settings and save to file
+  const updateSettings = useCallback(
+    async (updates) => {
+      const newSettings = { ...settings, ...updates }
+      setSettings(newSettings)
+      await saveSettings(newSettings)
+    },
+    [settings, saveSettings]
+  )
+
+  // Handle input changes for both direct field updates and form elements
+  const handleInputChange = useCallback(
+    (e) => {
+      const { name, value, type, checked } = e?.target || {}
+
+      // If called directly with field and value (e.g., from a custom component)
+      if (typeof e === 'string' && value === undefined) {
+        updateSettings({ [e]: value })
+        return
+      }
+
+      // Handle regular form inputs
+      if (name) {
+        updateSettings({ [name]: type === 'checkbox' ? checked : value })
+      }
+    },
+    [updateSettings]
+  )
+
+  // Handle profile selection change
+  const handleProfileSelect = useCallback(
+    (e) => {
+      updateSettings({ activeProfileId: e.target.value })
+    },
+    [updateSettings]
+  )
+
+  const [activeTab, setActiveTab] = useState('general')
 
   const handleNewProfile = () => {
     setIsCreatingProfile(true)
     setNewProfileName(`Perfil ${settings.profiles.length + 1}`)
+
+    // Clear all user and external service data
+    setSettings((prev) => ({
+      ...prev,
+      // User data
+      callsign: '',
+      name: '',
+      city: '',
+      gridLocator: '',
+      email: '',
+
+      // External services
+      externalApiKey: '',
+      qrzUsername: '',
+      qrzPassword: '',
+      hamqthUsername: '',
+      hamqthPassword: '',
+
+      // Sync settings
+      autoSync: false,
+      syncInterval: 60
+    }))
   }
 
   const handleSaveNewProfile = () => {
@@ -133,43 +203,15 @@ const SettingsDialog = ({ isOpen, onClose }) => {
     }
   }, [isOpen, handleKeyDown])
 
-  // Cargar configuración al abrir el diálogo
-  useEffect(() => {
-    if (!isOpen) return
-
-    const loadSettings = async () => {
-      try {
-        const loadedSettings = await window.electron.ipcRenderer.invoke('get-settings')
-        setSettings((prev) => ({
-          ...prev,
-          ...loadedSettings
-        }))
-      } catch (error) {
-        console.error('Error al cargar la configuración:', error)
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
-    loadSettings()
-  }, [isOpen])
-
-  const handleInputChange = (e) => {
-    const { name, value, type, checked } = e.target
-    setSettings((prev) => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value
-    }))
-  }
-
-  const handleSave = async () => {
+  // Handle form submission
+  const handleSave = useCallback(async () => {
     try {
-      await window.electron.ipcRenderer.invoke('save-settings', settings)
+      await saveSettings(settings)
       onClose()
     } catch (error) {
       console.error('Error al guardar la configuración:', error)
     }
-  }
+  }, [settings, saveSettings, onClose])
 
   if (!isOpen) return null
 
@@ -234,7 +276,7 @@ const SettingsDialog = ({ isOpen, onClose }) => {
                   <select
                     id="profile-selector"
                     value={settings.activeProfileId}
-                    onChange={handleProfileChange}
+                    onChange={handleProfileSelect}
                     className="form-select"
                   >
                     {settings.profiles.map((profile) => (
