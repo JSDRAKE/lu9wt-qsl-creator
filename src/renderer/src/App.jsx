@@ -1,7 +1,6 @@
 import { useCallback, useState } from 'react'
 import AboutDialog from './components/AboutDialog'
 import Header from './components/Header'
-import InitialDataDialog from './components/InitialDataDialog'
 import QSLCardSelector from './components/QSLCardSelector'
 import QSLForm from './components/QSLForm'
 import QSLManager from './components/QSLManager'
@@ -18,12 +17,10 @@ function App() {
   const [dialogs, setDialogs] = useState({
     about: false,
     settings: false,
-    userData: false,
-    initial: false
+    userData: false
   })
 
   const [appInfo, setAppInfo] = useState(null)
-  const [isCheckingUserData, setIsCheckingUserData] = useState(true)
 
   // Custom hooks
   const {
@@ -39,11 +36,7 @@ function App() {
   const { downloadQSL } = useQSLDownload()
 
   // App initialization
-  useAppInitialization(
-    setAppInfo,
-    (show) => setDialogs((prev) => ({ ...prev, initial: show })),
-    setIsCheckingUserData
-  )
+  useAppInitialization(setAppInfo)
 
   // Menu handlers
   useMenuHandlers(
@@ -57,8 +50,7 @@ function App() {
     setDialogs({
       about: false,
       settings: false,
-      userData: false,
-      initial: false
+      userData: false
     })
   }, [])
 
@@ -121,21 +113,6 @@ function App() {
         isOpen={dialogs.userData}
         onClose={() => setDialogs((prev) => ({ ...prev, userData: false }))}
       />
-
-      {!isCheckingUserData && (
-        <InitialDataDialog
-          isOpen={dialogs.initial}
-          onClose={() => setDialogs((prev) => ({ ...prev, initial: false }))}
-          onOpenUserData={() => {
-            setDialogs({
-              initial: false,
-              userData: true,
-              about: false,
-              settings: false
-            })
-          }}
-        />
-      )}
     </div>
   )
 }
