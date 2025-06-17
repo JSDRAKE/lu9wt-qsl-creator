@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react'
 import AboutDialog from './components/AboutDialog'
 import Header from './components/Header'
+import InitialSetupDialog from './components/InitialSetupDialog'
 import QSLCardSelector from './components/QSLCardSelector'
 import QSLForm from './components/QSLForm'
 import QSLManager from './components/QSLManager'
@@ -12,15 +13,19 @@ import useMenuHandlers from './hooks/useMenuHandlers'
 import useQSLDownload from './hooks/useQSLDownload'
 import { useQSLForm } from './hooks/useQSLForm'
 
+// Default profile will be created when needed in the settings dialog
+
 function App() {
   // Grouped dialog states
   const [dialogs, setDialogs] = useState({
     about: false,
     settings: false,
-    userData: false
+    userData: false,
+    initialSetup: false
   })
 
   const [appInfo, setAppInfo] = useState(null)
+  const [, setIsFirstRun] = useState(false)
 
   // Custom hooks
   const {
@@ -35,8 +40,46 @@ function App() {
 
   const { downloadQSL } = useQSLDownload()
 
+  // Check if we need to show initial setup
+  const checkInitialSetup = useCallback(async () => {
+    try {
+      const settings = await window.api.getSettings()
+      if (settings === null) {
+        // No settings file exists, show initial setup
+        setIsFirstRun(true)
+        setDialogs((prev) => ({
+          ...prev,
+          initialSetup: true,
+          settings: false // Ensure settings dialog is closed initially
+        }))
+        return
+      }
+
+      // Check if we have valid profiles
+      const hasProfiles = settings?.profiles?.length > 0
+      const hasActiveProfile = settings?.activeProfileId
+
+      if (!hasProfiles || !hasActiveProfile) {
+        setIsFirstRun(true)
+        setDialogs((prev) => ({
+          ...prev,
+          initialSetup: true,
+          settings: false // Ensure settings dialog is closed initially
+        }))
+      }
+    } catch (error) {
+      console.error('Error checking initial setup:', error)
+      setIsFirstRun(true)
+      setDialogs((prev) => ({
+        ...prev,
+        initialSetup: true,
+        settings: false // Ensure settings dialog is closed initially
+      }))
+    }
+  }, [])
+
   // App initialization
-  useAppInitialization(setAppInfo)
+  useAppInitialization(setAppInfo, checkInitialSetup)
 
   // Menu handlers
   useMenuHandlers(
@@ -45,12 +88,28 @@ function App() {
     (show) => setDialogs((prev) => ({ ...prev, userData: show }))
   )
 
+  // Handle initial setup configuration
+  const handleInitialConfigure = useCallback(() => {
+    setDialogs({
+      initialSetup: false,
+      settings: true,
+      about: false,
+      userData: false
+    })
+  }, [])
+
+  // Close initial setup
+  const handleCloseInitialSetup = useCallback(() => {
+    setDialogs((prev) => ({ ...prev, initialSetup: false }))
+  }, [])
+
   // Close all dialogs
   const closeAllDialogs = useCallback(() => {
     setDialogs({
       about: false,
       settings: false,
-      userData: false
+      userData: false,
+      initialSetup: false
     })
   }, [])
 
@@ -112,6 +171,12 @@ function App() {
       <UserDataDialog
         isOpen={dialogs.userData}
         onClose={() => setDialogs((prev) => ({ ...prev, userData: false }))}
+      />
+
+      <InitialSetupDialog
+        isOpen={dialogs.initialSetup}
+        onClose={handleCloseInitialSetup}
+        onConfigure={handleInitialConfigure}
       />
     </div>
   )
