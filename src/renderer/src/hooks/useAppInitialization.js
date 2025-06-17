@@ -1,20 +1,6 @@
-import { useCallback, useEffect } from 'react'
+import { useEffect } from 'react'
 
-export const useAppInitialization = (setAppInfo, setShowInitialDialog, setIsCheckingUserData) => {
-  const checkUserData = useCallback(async () => {
-    if (!window.electron?.ipcRenderer) return
-    try {
-      const { success, data } = await window.electron.ipcRenderer.invoke('check-user-data')
-      if (!success || !data || Object.values(data).every((value) => !value)) {
-        setShowInitialDialog(true)
-      }
-    } catch (error) {
-      console.error('Error checking user data:', error)
-    } finally {
-      setIsCheckingUserData(false)
-    }
-  }, [setShowInitialDialog, setIsCheckingUserData])
-
+export const useAppInitialization = (setAppInfo) => {
   useEffect(() => {
     const loadAppInfo = async () => {
       if (!window.electron?.ipcRenderer) return
@@ -27,10 +13,9 @@ export const useAppInitialization = (setAppInfo, setShowInitialDialog, setIsChec
     }
 
     loadAppInfo()
-    checkUserData()
-  }, [checkUserData, setAppInfo])
+  }, [setAppInfo])
 
-  return { checkUserData }
+  return {}
 }
 
 export default useAppInitialization
