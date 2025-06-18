@@ -16,9 +16,12 @@ import {
 import '../styles/dialogs/settings-dialog.css'
 
 const SettingsDialog = ({ isOpen, onClose }) => {
+  // State declarations at the top
   const [isCreatingProfile, setIsCreatingProfile] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [newProfileName, setNewProfileName] = useState('')
+  const [selectedProfileId, setSelectedProfileId] = useState('')
+  const [activeTab, setActiveTab] = useState('general')
   const [settings, setSettings] = useState({
     // Default settings (will be overridden by loaded settings)
     theme: 'light',
@@ -26,10 +29,19 @@ const SettingsDialog = ({ isOpen, onClose }) => {
     notifications: true,
     profiles: [],
     activeProfileId: '',
+    // User information
+    userName: '',
+    callsign: '',
+    city: '',
+    gridLocator: '',
     email: '',
-    password: '',
+    // External services
+    qrzUsername: '',
+    qrzPassword: '',
+    hamqthUsername: '',
+    hamqthPassword: '',
+    // Application settings
     rememberMe: true,
-    externalApiKey: '',
     autoSync: false,
     syncInterval: 60
   })
@@ -57,11 +69,32 @@ const SettingsDialog = ({ isOpen, onClose }) => {
     const loadSettings = async () => {
       try {
         const response = await window.api.getSettings()
-        if (response && response.success && response.data) {
+        console.log('Settings response:', response) // Debug log
+
+        if (response && response.success) {
+          // If we have data in the response, use it, otherwise use defaults
+          const loadedSettings = response.data?.data || {}
+          console.log('Loaded settings:', loadedSettings) // Debug log
+
           // Merge with defaults to ensure all required fields are present
-          setSettings({ ...defaultSettings, ...response.data })
+          const mergedSettings = {
+            ...defaultSettings,
+            ...loadedSettings,
+            // Ensure profiles array exists and is an array
+            profiles: Array.isArray(loadedSettings.profiles)
+              ? loadedSettings.profiles
+              : defaultSettings.profiles,
+            // Ensure activeProfileId is valid
+            activeProfileId: loadedSettings.activeProfileId || defaultSettings.activeProfileId
+          }
+
+          console.log('Merged settings:', mergedSettings) // Debug log
+          setSettings(mergedSettings)
+          // Set the initially selected profile to the active one
+          setSelectedProfileId(mergedSettings.activeProfileId)
         } else {
-          // Use default settings if no settings file exists
+          console.log('No valid settings found, using defaults')
+          // Use default settings if no settings file exists or invalid response
           setSettings(defaultSettings)
         }
       } catch (error) {
@@ -96,41 +129,128 @@ const SettingsDialog = ({ isOpen, onClose }) => {
   // Update settings and save to file
   const updateSettings = useCallback(
     async (updates) => {
-      const newSettings = { ...settings, ...updates }
+      // Merge updates with existing settings
+      const newSettings = {
+        ...settings,
+        ...updates,
+        // Ensure profiles array is preserved if not being updated
+        profiles: updates.profiles || settings.profiles
+      }
+
+      // If active profile is being updated, apply its settings to the root level
+      if (updates.activeProfileId) {
+        const activeProfile = newSettings.profiles.find(
+          (profile) => profile.id === updates.activeProfileId
+        )
+        if (activeProfile) {
+          // Apply profile-specific settings to root level
+          // eslint-disable-next-line no-unused-vars
+          const { id, name, ...profileSettings } = activeProfile
+          // Asegurarse de que userName se copie correctamente
+          if (activeProfile.userName !== undefined) {
+            newSettings.userName = activeProfile.userName
+          }
+          Object.assign(newSettings, profileSettings)
+        }
+      }
+
       setSettings(newSettings)
       await saveSettings(newSettings)
     },
     [settings, saveSettings]
   )
 
+  // Get current profile data (commented out for now as it's not currently used)
+  // const getCurrentProfileData = useCallback(() => {
+  //   if (!settings.activeProfileId) return {}
+  //   return settings.profiles.find(
+  //     (profile) => profile.id === settings.activeProfileId
+  //   ) || {}
+  // }, [settings.activeProfileId, settings.profiles])
+
   // Handle input changes for both direct field updates and form elements
   const handleInputChange = useCallback(
     (e) => {
-      const { name, value, type, checked } = e?.target || {}
+      const { name, value, type, checked } = e.target
+      const fieldValue = type === 'checkbox' ? checked : value
 
-      // If called directly with field and value (e.g., from a custom component)
-      if (typeof e === 'string' && value === undefined) {
-        updateSettings({ [e]: value })
-        return
-      }
+      // Definir campos específicos del perfil
+      const profileFields = [
+        'userName',
+        'callsign',
+        'city',
+        'gridLocator',
+        'email',
+        'qrzUsername',
+        'qrzPassword',
+        'hamqthUsername',
+        'hamqthPassword'
+      ]
 
-      // Handle regular form inputs
-      if (name) {
-        updateSettings({ [name]: type === 'checkbox' ? checked : value })
+      // Si hay un perfil activo y el campo pertenece a los datos del perfil
+      if (settings.activeProfileId && profileFields.includes(name)) {
+        // Actualizar los datos del perfil
+        const updatedProfiles = settings.profiles.map((profile) =>
+          profile.id === settings.activeProfileId ? { ...profile, [name]: fieldValue } : profile
+        )
+
+        // Actualizar tanto el perfil como la configuración raíz
+        updateSettings({
+          profiles: updatedProfiles,
+          [name]: fieldValue
+        })
+      } else {
+        // Para campos que no son del perfil o cuando no hay perfil activo
+        updateSettings({ [name]: fieldValue })
       }
     },
-    [updateSettings]
+    [settings.activeProfileId, settings.profiles, updateSettings]
   )
 
-  // Handle profile selection change
-  const handleProfileSelect = useCallback(
-    (e) => {
-      updateSettings({ activeProfileId: e.target.value })
-    },
-    [updateSettings]
-  )
+  // Handle profile selection change (only updates the selection, not the active profile)
+  const handleProfileSelect = useCallback((e) => {
+    setSelectedProfileId(e.target.value)
+  }, [])
 
-  const [activeTab, setActiveTab] = useState('general')
+  // Handle profile activation
+  const handleActivateProfile = useCallback(() => {
+    if (!selectedProfileId) return
+
+    // Encontrar el perfil seleccionado
+    const selectedProfile = settings.profiles.find((profile) => profile.id === selectedProfileId)
+    if (!selectedProfile) return
+
+    // Extraer los datos del perfil con valores por defecto
+    // eslint-disable-next-line no-unused-vars
+    const { id, name: profileName, ...profileData } = selectedProfile || {}
+
+    // Extraer los campos que necesitamos
+    const {
+      userName = '',
+      callsign = '',
+      city = '',
+      gridLocator = '',
+      email = '',
+      qrzUsername = '',
+      qrzPassword = '',
+      hamqthUsername = '',
+      hamqthPassword = ''
+    } = profileData
+
+    // Actualizar la configuración con los datos del perfil
+    updateSettings({
+      activeProfileId: selectedProfileId,
+      userName,
+      callsign,
+      city,
+      gridLocator,
+      email,
+      qrzUsername,
+      qrzPassword,
+      hamqthUsername,
+      hamqthPassword
+    })
+  }, [selectedProfileId, settings.profiles, updateSettings])
 
   const handleNewProfile = () => {
     setIsCreatingProfile(true)
@@ -164,19 +284,35 @@ const SettingsDialog = ({ isOpen, onClose }) => {
 
     const newProfile = {
       id: Date.now().toString(),
-      name: newProfileName.trim(),
+      name: newProfileName.trim(), // Nombre del perfil
+      // Inicializar campos vacíos para el nuevo perfil
+      userName: '',
       callsign: '',
-      fullName: '',
-      qth: '',
-      country: ''
+      city: '',
+      gridLocator: '',
+      email: '',
+      qrzUsername: '',
+      qrzPassword: '',
+      hamqthUsername: '',
+      hamqthPassword: ''
     }
 
-    setSettings((prev) => ({
-      ...prev,
-      profiles: [...prev.profiles, newProfile],
-      activeProfileId: newProfile.id
-    }))
-
+    const updatedProfiles = [...settings.profiles, newProfile]
+    updateSettings({
+      profiles: updatedProfiles,
+      activeProfileId: newProfile.id,
+      // No copiamos el nombre del perfil al estado raíz, solo los datos del usuario
+      userName: settings.userName || '',
+      callsign: settings.callsign || '',
+      city: settings.city || '',
+      gridLocator: settings.gridLocator || '',
+      email: settings.email || '',
+      qrzUsername: settings.qrzUsername || '',
+      qrzPassword: settings.qrzPassword || '',
+      hamqthUsername: settings.hamqthUsername || '',
+      hamqthPassword: settings.hamqthPassword || ''
+    })
+    setSelectedProfileId(newProfile.id)
     setIsCreatingProfile(false)
     setNewProfileName('')
   }
@@ -297,7 +433,7 @@ const SettingsDialog = ({ isOpen, onClose }) => {
                 <div className="profile-selector-container">
                   <select
                     id="profile-selector"
-                    value={settings.activeProfileId}
+                    value={selectedProfileId || ''}
                     onChange={handleProfileSelect}
                     className="form-select"
                   >
@@ -313,9 +449,13 @@ const SettingsDialog = ({ isOpen, onClose }) => {
                     <button
                       type="button"
                       className="btn btn-small btn-primary btn-icon"
-                      onClick={() => {}}
+                      onClick={handleActivateProfile}
                       title="Activar perfil"
-                      disabled={isCreatingProfile}
+                      disabled={
+                        isCreatingProfile ||
+                        !selectedProfileId ||
+                        selectedProfileId === settings.activeProfileId
+                      }
                     >
                       <FiUserCheck />
                       <span>Activar</span>
@@ -398,6 +538,18 @@ const SettingsDialog = ({ isOpen, onClose }) => {
         return (
           <div className="tab-content" id="user-tabpanel">
             <div className="form-group">
+              <label htmlFor="userName">Nombre de Usuario</label>
+              <input
+                type="text"
+                id="userName"
+                name="userName"
+                value={settings.userName || ''}
+                onChange={handleInputChange}
+                className="form-input"
+                placeholder="Tu nombre de usuario"
+              />
+            </div>
+            <div className="form-group">
               <label htmlFor="callsign">Indicativo</label>
               <input
                 type="text"
@@ -409,18 +561,7 @@ const SettingsDialog = ({ isOpen, onClose }) => {
                 placeholder="Ej: LU9WT"
               />
             </div>
-            <div className="form-group">
-              <label htmlFor="name">Nombre</label>
-              <input
-                type="text"
-                id="name"
-                name="name"
-                value={settings.name || ''}
-                onChange={handleInputChange}
-                className="form-input"
-                placeholder="Nombre completo"
-              />
-            </div>
+
             <div className="form-group">
               <label htmlFor="city">Ciudad</label>
               <input
