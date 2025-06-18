@@ -40,17 +40,15 @@ function App() {
 
   const { downloadQSL } = useQSLDownload()
 
-  // Check if we need to show initial setup
+  // Verificar si necesitamos mostrar la configuración inicial
   const checkInitialSetup = useCallback(async () => {
     try {
-      console.log('Checking for settings file...')
       const response = await window.api.getSettings()
-      console.log('Settings loaded:', response)
 
-      // Check if the request was successful
+      // Verificar si la petición fue exitosa
       if (!response.success) {
-        console.error('Error loading settings:', response.error)
-        // Show initial setup in case of error
+        console.error('Error al cargar configuraciones:', response.error)
+        // Mostrar configuración inicial en caso de error
         setIsFirstRun(true)
         setDialogs((prev) => ({
           ...prev,
@@ -62,9 +60,8 @@ function App() {
 
       const responseData = response.data
 
-      // If no settings file exists, show initial setup
+      // Si no existe el archivo de configuraciones, mostrar configuración inicial
       if (responseData === null) {
-        console.log('No settings file found, showing initial setup')
         setIsFirstRun(true)
         setDialogs((prev) => ({
           ...prev,
@@ -74,18 +71,11 @@ function App() {
         return
       }
 
-      // Extract the actual settings from the data object
+      // Extraer las configuraciones del objeto de respuesta
       const settings = responseData.data || {}
 
-      // Debug: Log the entire settings object
-      console.log('Response data:', responseData)
-      console.log('Settings object type:', typeof settings)
-      console.log('Settings object keys:', Object.keys(settings || {}))
-      console.log('Settings object content:', JSON.stringify(settings, null, 2))
-
-      // Check if we have valid settings object with profiles
+      // Verificar si tenemos un objeto de configuraciones válido con perfiles
       if (!settings || typeof settings !== 'object') {
-        console.log('Invalid settings format, showing initial setup')
         setIsFirstRun(true)
         setDialogs((prev) => ({
           ...prev,
@@ -148,12 +138,22 @@ function App() {
   // App initialization
   useAppInitialization(setAppInfo, checkInitialSetup)
 
-  // Menu handlers
-  useMenuHandlers(
+  // Menu handlers - Memoize the handlers to prevent unnecessary recreations
+  const handleShowAbout = useCallback(
     (show) => setDialogs((prev) => ({ ...prev, about: show })),
-    (show) => setDialogs((prev) => ({ ...prev, settings: show })),
-    (show) => setDialogs((prev) => ({ ...prev, userData: show }))
+    []
   )
+  const handleShowSettings = useCallback(
+    (show) => setDialogs((prev) => ({ ...prev, settings: show })),
+    []
+  )
+  const handleShowUserData = useCallback(
+    (show) => setDialogs((prev) => ({ ...prev, userData: show })),
+    []
+  )
+
+  // Initialize menu handlers once with memoized callbacks
+  useMenuHandlers(handleShowAbout, handleShowSettings, handleShowUserData)
 
   // Handle initial setup configuration
   const handleInitialConfigure = useCallback(() => {
