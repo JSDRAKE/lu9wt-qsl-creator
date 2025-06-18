@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   FiEdit,
   FiGlobe,
+  FiMail,
   FiRotateCw,
   FiSave,
   FiSettings,
@@ -21,7 +22,7 @@ const SettingsDialog = ({ isOpen, onClose }) => {
   const [isLoading, setIsLoading] = useState(true)
   const [newProfileName, setNewProfileName] = useState('')
   const [selectedProfileId, setSelectedProfileId] = useState('')
-  const [activeTab, setActiveTab] = useState('general')
+  const [activeTab, setActiveTab] = useState('email')
   const [settings, setSettings] = useState({
     // Default settings (will be overridden by loaded settings)
     theme: 'light',
@@ -35,6 +36,7 @@ const SettingsDialog = ({ isOpen, onClose }) => {
     city: '',
     gridLocator: '',
     email: '',
+    emailPassword: '',
     // External services
     qrzUsername: '',
     qrzPassword: '',
@@ -55,7 +57,7 @@ const SettingsDialog = ({ isOpen, onClose }) => {
       profiles: [],
       activeProfileId: '',
       email: '',
-      password: '',
+      emailPassword: '',
       rememberMe: true,
       externalApiKey: '',
       autoSync: false,
@@ -662,6 +664,41 @@ const SettingsDialog = ({ isOpen, onClose }) => {
           </div>
         )
 
+      case 'email':
+        return (
+          <div className="tab-content" id="email-tabpanel">
+            <div className="form-group">
+              <label htmlFor="email">Dirección de Correo Electrónico</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                value={settings.email || ''}
+                onChange={handleInputChange}
+                className="form-input"
+                placeholder="tu@email.com"
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="emailPassword">Contraseña</label>
+              <input
+                type="password"
+                id="emailPassword"
+                name="emailPassword"
+                value={settings.emailPassword || ''}
+                onChange={handleInputChange}
+                className="form-input"
+                placeholder="••••••••"
+              />
+            </div>
+            <div className="form-note">
+              <p>
+                Esta información se utilizará para enviar correos electrónicos desde la aplicación.
+              </p>
+            </div>
+          </div>
+        )
+
       default:
         return null
     }
@@ -672,56 +709,66 @@ const SettingsDialog = ({ isOpen, onClose }) => {
       <div className="settings-modal">
         <div className="settings-header">
           <h2>CONFIGURACIÓN</h2>
-          <button className="close-button" onClick={onClose} aria-label="Cerrar">
-            <FiX />
-          </button>
         </div>
 
-        <div className="settings-tabs">
-          <button
-            className={`tab-button ${activeTab === 'general' ? 'active' : ''}`}
-            onClick={() => setActiveTab('general')}
-            aria-selected={activeTab === 'general'}
-            aria-controls="general-tabpanel"
-            id="general-tab"
-            role="tab"
-          >
-            <FiSettings className="tab-icon" />
-            <span>General</span>
-          </button>
-          <button
-            className={`tab-button ${activeTab === 'profile' ? 'active' : ''}`}
-            onClick={() => setActiveTab('profile')}
-            aria-selected={activeTab === 'profile'}
-            aria-controls="profile-tabpanel"
-            id="profile-tab"
-            role="tab"
-          >
-            <FiUser className="tab-icon" />
-            <span>Perfil</span>
-          </button>
-          <button
-            className={`tab-button ${activeTab === 'user' ? 'active' : ''}`}
-            onClick={() => setActiveTab('user')}
-            aria-selected={activeTab === 'user'}
-            aria-controls="user-tabpanel"
-            id="user-tab"
-            role="tab"
-          >
-            <FiUserCheck className="tab-icon" />
-            <span>Usuario</span>
-          </button>
-          <button
-            className={`tab-button ${activeTab === 'external' ? 'active' : ''}`}
-            onClick={() => setActiveTab('external')}
-            aria-selected={activeTab === 'external'}
-            aria-controls="external-tabpanel"
-            id="external-tab"
-            role="tab"
-          >
-            <FiGlobe className="tab-icon" />
-            <span>Servicio Externo</span>
-          </button>
+        <div className="settings-tabs-container">
+          <div className="settings-tabs">
+            <button
+              className={`tab-button ${activeTab === 'general' ? 'active' : ''}`}
+              onClick={() => setActiveTab('general')}
+              aria-selected={activeTab === 'general'}
+              aria-controls="general-tabpanel"
+              id="general-tab"
+              role="tab"
+            >
+              <FiSettings className="tab-icon" />
+              <span>General</span>
+            </button>
+            <button
+              className={`tab-button ${activeTab === 'profile' ? 'active' : ''}`}
+              onClick={() => setActiveTab('profile')}
+              aria-selected={activeTab === 'profile'}
+              aria-controls="profile-tabpanel"
+              id="profile-tab"
+              role="tab"
+            >
+              <FiUser className="tab-icon" />
+              <span>Perfiles</span>
+            </button>
+            <button
+              className={`tab-button ${activeTab === 'user' ? 'active' : ''}`}
+              onClick={() => setActiveTab('user')}
+              aria-selected={activeTab === 'user'}
+              aria-controls="user-tabpanel"
+              id="user-tab"
+              role="tab"
+            >
+              <FiUserCheck className="tab-icon" />
+              <span>Usuario</span>
+            </button>
+            <button
+              className={`tab-button ${activeTab === 'email' ? 'active' : ''}`}
+              onClick={() => setActiveTab('email')}
+              aria-selected={activeTab === 'email'}
+              aria-controls="email-tabpanel"
+              id="email-tab"
+              role="tab"
+            >
+              <FiMail className="tab-icon" />
+              <span>Correo</span>
+            </button>
+            <button
+              className={`tab-button ${activeTab === 'external' ? 'active' : ''}`}
+              onClick={() => setActiveTab('external')}
+              aria-selected={activeTab === 'external'}
+              aria-controls="external-tabpanel"
+              id="external-tab"
+              role="tab"
+            >
+              <FiGlobe className="tab-icon" />
+              <span>Servicios</span>
+            </button>
+          </div>
         </div>
 
         <div className="settings-content">{renderTabContent()}</div>
@@ -734,7 +781,7 @@ const SettingsDialog = ({ isOpen, onClose }) => {
             disabled={isLoading}
             aria-label="Cancelar y cerrar"
           >
-            <FiX className="btn-icon" />
+            <FiX size={16} />
             <span>CANCELAR</span>
           </button>
           <button
@@ -744,8 +791,8 @@ const SettingsDialog = ({ isOpen, onClose }) => {
             disabled={isLoading}
             aria-label="Guardar configuración"
           >
-            {isLoading ? <FiRotateCw className="btn-icon spin" /> : <FiSave className="btn-icon" />}
-            <span>{isLoading ? 'GUARDANDO...' : 'GUARDAR CAMBIOS'}</span>
+            {isLoading ? <FiRotateCw className="spin" size={16} /> : <FiSave size={16} />}
+            <span>{isLoading ? 'GUARDANDO...' : 'GUARDAR'}</span>
           </button>
         </div>
       </div>
