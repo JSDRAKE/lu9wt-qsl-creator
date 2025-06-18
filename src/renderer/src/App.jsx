@@ -6,7 +6,6 @@ import QSLCardSelector from './components/QSLCardSelector'
 import QSLForm from './components/QSLForm'
 import QSLManager from './components/QSLManager'
 import SettingsDialog from './components/SettingsDialog'
-import UserDataDialog from './components/UserDataDialog'
 import useAppInitialization from './hooks/useAppInitialization'
 import useKeyboardShortcuts from './hooks/useKeyboardShortcuts'
 import useMenuHandlers from './hooks/useMenuHandlers'
@@ -20,7 +19,6 @@ function App() {
   const [dialogs, setDialogs] = useState({
     about: false,
     settings: false,
-    userData: false,
     initialSetup: false
   })
 
@@ -233,11 +231,6 @@ function App() {
       <SettingsDialog
         isOpen={dialogs.settings}
         onClose={() => setDialogs((prev) => ({ ...prev, settings: false }))}
-      />
-
-      <UserDataDialog
-        isOpen={dialogs.userData}
-        onClose={() => setDialogs((prev) => ({ ...prev, userData: false }))}
       />
 
       <InitialSetupDialog

@@ -2,7 +2,6 @@ import { electronApp, is, optimizer } from '@electron-toolkit/utils'
 import { app, BrowserWindow, ipcMain, Menu, shell } from 'electron'
 import { dirname, join } from 'path'
 import { fileURLToPath } from 'url'
-import { getUserData, saveUserData } from './userData.js'
 import { getSettings, saveSettings } from './settings.js'
 
 const __filename = fileURLToPath(import.meta.url)
@@ -215,30 +214,6 @@ app.whenReady().then(() => {
     appPath: app.getAppPath(),
     userDataPath: app.getPath('userData')
   }))
-
-  // Handle user data operations
-  ipcMain.handle('check-user-data', async () => {
-    try {
-      const data = await getUserData()
-      return { exists: true, data }
-    } catch (error) {
-      return { exists: false, error: error.message }
-    }
-  })
-
-  ipcMain.handle('get-user-data', async () => {
-    return await getUserData()
-  })
-
-  ipcMain.handle('save-user-data', async (event, data) => {
-    try {
-      const savedData = await saveUserData(data)
-      return { success: true, data: savedData }
-    } catch (error) {
-      console.error('Error in save-user-data:', error)
-      return { success: false, error: error.message }
-    }
-  })
 
   // Handle settings operations
   ipcMain.handle('get-settings', async () => {

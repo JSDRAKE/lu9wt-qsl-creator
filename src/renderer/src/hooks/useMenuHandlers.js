@@ -1,9 +1,8 @@
 import { useCallback, useEffect } from 'react'
 
-export const useMenuHandlers = (setShowAbout, setShowSettings, setShowUserData) => {
+export const useMenuHandlers = (setShowAbout, setShowSettings) => {
   const handleShowAbout = useCallback(() => setShowAbout(true), [setShowAbout])
   const handleShowSettings = useCallback(() => setShowSettings(true), [setShowSettings])
-  const handleUserData = useCallback(() => setShowUserData(true), [setShowUserData])
   const handleAddQSL = useCallback(() => {
     // TODO: Implement QSL addition logic
     console.log('Add new QSL')
@@ -29,7 +28,6 @@ export const useMenuHandlers = (setShowAbout, setShowSettings, setShowUserData) 
     cleanupFunctions.push(addListener('show-settings-dialog', handleShowSettings))
     cleanupFunctions.push(addListener('menu-add-qsl', handleAddQSL))
     cleanupFunctions.push(addListener('menu-delete-qsl', handleDeleteQSL))
-    cleanupFunctions.push(addListener('menu-user-data', handleUserData))
 
     // Return cleanup function that removes all listeners
     return () => {
@@ -39,7 +37,7 @@ export const useMenuHandlers = (setShowAbout, setShowSettings, setShowUserData) 
         }
       })
     }
-  }, [handleShowAbout, handleShowSettings, handleUserData, handleAddQSL, handleDeleteQSL])
+  }, [handleShowAbout, handleShowSettings, handleAddQSL, handleDeleteQSL])
 
   // No need to return anything as handlers are configured internally
 }
