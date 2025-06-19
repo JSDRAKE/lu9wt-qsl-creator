@@ -2,6 +2,7 @@ import PropTypes from 'prop-types'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 // IPC is now handled through the preload script
 import {
+  FiCheck,
   FiEdit,
   FiGlobe,
   FiMail,
@@ -364,6 +365,23 @@ const SettingsDialog = ({ isOpen, onClose }) => {
   }, [isOpen, handleKeyDown])
 
   // Handle form submission
+  const handleVerifyEmail = useCallback(async (email) => {
+    try {
+      // Aquí iría la lógica para verificar el correo
+      console.log('Verificando correo:', email)
+      // Ejemplo de verificación simulada
+      const isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+      if (isValid) {
+        alert(`Correo ${email} verificado correctamente`)
+      } else {
+        alert('Por favor ingrese un correo electrónico válido')
+      }
+    } catch (error) {
+      console.error('Error al verificar el correo:', error)
+      alert('Error al verificar el correo. Por favor intente nuevamente.')
+    }
+  }, [])
+
   const handleSave = useCallback(async () => {
     try {
       await saveSettings(settings)
@@ -691,10 +709,22 @@ const SettingsDialog = ({ isOpen, onClose }) => {
                 placeholder="••••••••"
               />
             </div>
+
             <div className="form-note">
               <p>
                 Esta información se utilizará para enviar correos electrónicos desde la aplicación.
               </p>
+            </div>
+            <div className="verify-button-container">
+              <button
+                type="button"
+                className="btn btn-secondary verify-button"
+                onClick={() => handleVerifyEmail(settings.email)}
+                disabled={!settings.email}
+              >
+                <FiCheck size={14} />
+                <span>Verificar Correo</span>
+              </button>
             </div>
           </div>
         )
