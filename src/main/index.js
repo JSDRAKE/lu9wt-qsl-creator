@@ -3,6 +3,7 @@ import { app, BrowserWindow, ipcMain, Menu, shell } from 'electron'
 import { dirname, join } from 'path'
 import { fileURLToPath } from 'url'
 import { getSettings, saveSettings } from './settings.js'
+import { setupEmailHandlers } from './controllers/emailController.js'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
@@ -214,6 +215,9 @@ app.whenReady().then(() => {
     appPath: app.getAppPath(),
     userDataPath: app.getPath('userData')
   }))
+
+  // Configurar manejadores de correo electrónico
+  setupEmailHandlers()
 
   // Handle settings operations
   ipcMain.handle('get-settings', async () => {
