@@ -186,15 +186,58 @@ function App() {
   })
 
   // Email submission handler
-  const handleEmailSubmit = useCallback((email) => {
-    try {
-      console.log('Sending QSL to:', email)
-      // TODO: Implementar lógica de envío de correo
-    } catch (error) {
-      console.error('Error sending email:', error)
-      // TODO: Mostrar notificación de error al usuario
-    }
-  }, [])
+  const handleEmailSubmit = useCallback(
+    async (email) => {
+      try {
+        console.log('Sending QSL to:', email)
+
+        if (!generatedQSL) {
+          throw new Error('No hay una QSL generada para enviar')
+        }
+
+        // Extraer la imagen de la QSL desde imageUrl
+        const qslImage = generatedQSL.imageUrl || ''
+
+        if (!qslImage) {
+          console.error('No se pudo obtener la imagen de la QSL. generatedQSL:', generatedQSL)
+          throw new Error('No se pudo obtener la imagen de la QSL')
+        }
+
+        // Extraer los datos de la QSL con los nombres de propiedad correctos
+        const qslData = {
+          callsign: generatedQSL.callsign || '',
+          date: generatedQSL.date || new Date().toLocaleDateString(),
+          time: generatedQSL.time || new Date().toLocaleTimeString(),
+          frequency: generatedQSL.frequency || '',
+          mode: generatedQSL.mode || '',
+          report: generatedQSL.report || ''
+        }
+
+        // Enviar el correo a través de IPC
+        const result = await window.electron.ipcRenderer.invoke('send-qsl-email', {
+          to: email,
+          qslData,
+          qslImage
+        })
+
+        if (!result.success) {
+          throw new Error(result.error || 'Error al enviar el correo')
+        }
+
+        // Mostrar notificación de éxito
+        console.log('Correo enviado correctamente:', result.messageId)
+        alert('¡QSL enviada correctamente por correo!')
+
+        return { success: true }
+      } catch (error) {
+        console.error('Error sending email:', error)
+        // Mostrar notificación de error
+        alert(`Error al enviar el correo: ${error.message}`)
+        return { success: false, error: error.message }
+      }
+    },
+    [generatedQSL]
+  )
 
   return (
     <div className="container">
