@@ -74,8 +74,8 @@ export const generateQSL = async (templateImage, formData) => {
         context.fillText(upperMode, 660, 460)
       }
 
-      // Convert to data URL
-      const imgData = canvas.toDataURL('image/jpeg', 0.9)
+      // Convert to high-quality JPG
+      const imgData = canvas.toDataURL('image/jpeg', 1.0) // 1.0 for maximum quality
       resolve(imgData)
     }
 
