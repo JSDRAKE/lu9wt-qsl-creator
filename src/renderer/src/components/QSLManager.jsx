@@ -11,9 +11,16 @@ const QSLManager = ({ generatedQSL, onSendEmail, onDownload }) => {
     setShowEmailForm(true)
   }
 
-  const handleEmailSubmit = (email) => {
-    onSendEmail(email)
-    setShowEmailForm(false)
+  const handleEmailSubmit = async (email) => {
+    try {
+      await onSendEmail(email)
+      // No cerramos el formulario aquí, dejamos que EmailForm maneje el cierre
+      // después de que se complete el envío exitosamente
+    } catch (error) {
+      console.error('Error en handleEmailSubmit:', error)
+      // Dejamos que EmailForm maneje el estado de error
+      throw error // Re-lanzamos el error para que EmailForm lo maneje
+    }
   }
 
   const handleBack = () => {
