@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import { useCallback, useEffect, useState } from 'react'
-import { getEmailFromCallsign } from '../../utils/qrzApi'
+import { getEmailFromCallsign } from '../utils/qrzApi'
 import '../styles/components/EmailForm.css'
 import EmailStatusModal from './EmailStatusModal'
 
