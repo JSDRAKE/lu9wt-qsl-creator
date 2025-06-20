@@ -29,6 +29,7 @@ function App() {
   const {
     formData,
     generatedQSL,
+    setGeneratedQSL,
     handleInputChange,
     handleTemplateChange,
     generateQSL,
@@ -185,6 +186,19 @@ function App() {
     }
   })
 
+  // Handle operator name changes from QRZ lookup
+  const handleOperatorNameChange = useCallback(
+    (e) => {
+      if (e.target.name === 'operatorName' && e.target.value) {
+        setGeneratedQSL((prev) => ({
+          ...prev,
+          operatorName: e.target.value
+        }))
+      }
+    },
+    [setGeneratedQSL]
+  )
+
   // Email submission handler
   const handleEmailSubmit = useCallback(
     async (email) => {
@@ -202,6 +216,7 @@ function App() {
       // Extraer los datos de la QSL con los nombres de propiedad correctos
       const qslData = {
         callsign: generatedQSL.callsign || '',
+        operatorName: generatedQSL.operatorName || generatedQSL.callsign || '',
         date: generatedQSL.date || new Date().toLocaleDateString(),
         time: generatedQSL.time || new Date().toLocaleTimeString(),
         frequency: generatedQSL.frequency || '',
@@ -253,6 +268,7 @@ function App() {
           generatedQSL={generatedQSL}
           onSendEmail={handleEmailSubmit}
           onDownload={() => downloadQSL(generatedQSL)}
+          onInputChange={handleOperatorNameChange}
         />
       )}
 
