@@ -4,14 +4,24 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
+@keyframes slideIn {
+  from { transform: translateY(-20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
 
 @keyframes pulse {
   0% { transform: scale(1); }
-  50% { transform: scale(1.1); }
+  50% { transform: scale(1.05); }
   100% { transform: scale(1); }
+}
+
+@keyframes signalPulse {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
 }
 
 /* Modal Overlay */
@@ -21,136 +31,268 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.8);
+  background-color: rgba(0, 0, 0, 0.75);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
-  padding: 20px;
-  opacity: 1;
-  transition: opacity 0.3s ease-in-out;
+  padding: 1.5rem;
+  box-sizing: border-box;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  animation: fadeIn 0.2s ease-in-out;
 }
 
 /* Modal Content */
 .email-status-modal-content {
-  background-color: var(--background-secondary, #1e2d3b);
-  color: var(--text-primary, #e0e0e0);
-  border-radius: 8px;
-  padding: 2rem;
+  background: var(--form-bg, rgba(10, 26, 36, 0.97));
+  border: 1px solid var(--form-border, #1e3a4c);
+  border-radius: 30px;
+  padding: 2.5rem 2.5rem 2rem;
   width: 100%;
-  max-width: 400px;
-  box-shadow: 0 5px 30px rgba(0, 0, 0, 0.3);
-  border: 1px solid var(--border-color, #2a3a4a);
-  animation: fadeIn 0.3s ease-out;
+  max-width: 420px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+  animation: slideIn 0.3s ease-out;
   position: relative;
   text-align: center;
   font-size: 1rem;
   z-index: 1001;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  margin: 0 auto;
+  color: var(--text-primary, #e0e0e0);
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* Grid background effect */
+.email-status-modal-content::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background:
+    linear-gradient(rgba(58, 124, 165, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(58, 124, 165, 0.05) 1px, transparent 1px);
+  background-size: 20px 20px;
+  opacity: 0.6;
+  pointer-events: none;
+  z-index: -1;
 }
 
 /* Modal Header */
 .email-status-modal-header {
-  margin-bottom: 1.5rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid var(--border-color, #2a3a4a);
+  margin: 0 0 2rem;
+  padding: 0 0 1.25rem;
+  border-bottom: 1px solid var(--form-border, #1e3a4c);
   position: relative;
+  background: rgba(30, 58, 76, 0.3);
+  margin: -2.5rem -2.5rem 2rem;
+  padding: 1.5rem 2.5rem 1.25rem;
 }
 
 .email-status-modal-title {
   margin: 0;
-  color: var(--text-primary, #e0e0e0);
-  font-size: 1.25rem;
-  font-weight: 500;
+  font-size: 1.5rem;
+  font-weight: 700;
+  font-family: 'Courier New', monospace;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #fff;
+  text-shadow: 0 0 10px rgba(0, 255, 157, 0.3);
+  position: relative;
+  display: inline-block;
+  padding-bottom: 0.75rem;
+}
+
+.email-status-modal-title::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, rgba(0, 255, 157, 0.8), transparent);
+  animation: signalPulse 3s infinite;
+  z-index: 1;
 }
 
 /* Close Button */
 .email-status-modal-close {
   position: absolute;
-  top: 0.5rem;
-  right: 0.5rem;
-  background: none;
-  border: none;
+  top: 1rem;
+  right: 1rem;
+  background: rgba(30, 58, 76, 0.6);
+  border: 1px solid var(--form-border, #1e3a4c);
+  border-radius: 6px;
   font-size: 1.5rem;
-  color: var(--text-secondary, #8e9eab);
+  color: var(--text-secondary, #8a9ba8);
   cursor: pointer;
-  padding: 0.25rem;
+  width: 2.25rem;
+  height: 2.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  padding: 0;
   line-height: 1;
-  transition: color 0.2s;
 }
 
 .email-status-modal-close:hover {
   color: var(--text-primary, #e0e0e0);
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--accent-color, #3a7ca5);
 }
 
 /* Status Icon */
 .email-status-icon {
-  font-size: 4rem;
-  margin: 0 auto 1.5rem;
+  font-size: 4.5rem;
+  margin: 0 auto 2rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 100px;
-  height: 100px;
+  width: 110px;
+  height: 110px;
   border-radius: 50%;
   border: 3px solid;
+  background: rgba(0, 0, 0, 0.25);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
 }
 
 /* Status Specific Styles */
 .email-status-icon.success {
   color: #4caf50;
   border-color: #4caf50;
+  text-shadow: 0 0 20px rgba(76, 175, 80, 0.7);
+  box-shadow: 0 0 25px rgba(76, 175, 80, 0.3);
   animation: pulse 2s infinite;
 }
 
 .email-status-icon.error {
-  color: #f44336;
-  border-color: #f44336;
+  color: #ff5252;
+  border-color: #ff5252;
+  text-shadow: 0 0 20px rgba(255, 82, 82, 0.7);
+  box-shadow: 0 0 25px rgba(255, 82, 82, 0.3);
 }
 
 .email-status-icon.sending {
-  border-color: #2196f3;
+  color: #4fc3f7;
+  border-color: #4fc3f7;
   border-top-color: transparent;
-  animation: spin 1s linear infinite;
+  text-shadow: 0 0 20px rgba(79, 195, 247, 0.7);
+  box-shadow: 0 0 25px rgba(79, 195, 247, 0.3);
+  animation: spin 1.8s linear infinite;
 }
 
 /* Message */
 .email-status-message {
-  font-size: 1.1rem;
-  color: var(--text-primary, #e0e0e0);
-  margin: 1rem 0 0;
-  line-height: 1.5;
+  margin: 0 0 1.5rem;
+  font-size: 1.15rem;
+  line-height: 1.6;
+  color: var(--text-secondary, #e0e0e0);
+  padding: 0 0.5rem;
+  font-weight: 400;
 }
 
 /* Footer */
 .email-status-footer {
-  margin-top: 1.5rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid var(--border-color, #2a3a4a);
+  margin: 2.5rem -2.5rem -2rem;
+  padding: 1.5rem 2.5rem;
+  background: rgba(30, 58, 76, 0.3);
+  border-top: 1px solid var(--form-border, #1e3a4c);
 }
 
-/* Spinner */
-.email-status-spinner {
-  display: inline-block;
-  width: 50px;
-  height: 50px;
-  border: 3px solid rgba(255, 255, 255, 0.1);
-  border-radius: 50%;
-  border-top-color: #2196f3;
-  animation: spin 1s ease-in-out infinite;
-}
-
-/* Button */
 .email-status-button {
-  background-color: var(--primary-color, #3a7ca5);
+  background: linear-gradient(135deg, #3a7ca5 0%, #2c5e80 100%);
   color: white;
   border: none;
-  padding: 0.5rem 1.5rem;
-  border-radius: 4px;
-  cursor: pointer;
+  border-radius: 30px;
+  padding: 0.75rem 2.5rem;
   font-size: 1rem;
-  transition: background-color 0.2s;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  box-shadow: 0 4px 15px rgba(58, 124, 165, 0.4);
+  position: relative;
+  overflow: hidden;
+  min-width: 180px;
+}
+
+.email-status-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #4a8cb5 0%, #3a6e90 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
 .email-status-button:hover {
-  background-color: var(--primary-hover, #4d8dbd);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(58, 124, 165, 0.5);
+}
+
+.email-status-button:hover::before {
+  opacity: 1;
+}
+
+.email-status-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 10px rgba(58, 124, 165, 0.4);
+}
+
+.email-status-button span {
+  position: relative;
+  z-index: 1;
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .email-status-modal-content {
+    padding: 2rem 1.5rem 1.5rem;
+    width: 95%;
+    max-width: 100%;
+  }
+  
+  .email-status-modal-header {
+    margin: -2rem -1.5rem 1.5rem;
+    padding: 1.25rem 1.5rem 1rem;
+  }
+  
+  .email-status-footer {
+    margin: 2rem -1.5rem -1.5rem;
+    padding: 1.25rem 1.5rem;
+  }
+  
+  .email-status-icon {
+    width: 90px;
+    height: 90px;
+    font-size: 3.5rem;
+    margin-bottom: 1.75rem;
+  }
+  
+  .email-status-modal-title {
+    font-size: 1.3rem;
+    padding-bottom: 0.5rem;
+  }
+  
+  .email-status-message {
+    font-size: 1rem;
+    margin-bottom: 1.25rem;
+  }
+  
+  .email-status-button {
+    padding: 0.65rem 2rem;
+    min-width: 160px;
+  }
 }
