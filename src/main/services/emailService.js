@@ -209,55 +209,94 @@ RST: ${qslData.report || 'N/A'}
     }
 
     return `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333; line-height: 1.6;">
-        <h2 style="color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px;">¡Tu tarjeta QSL está lista!</h2>
+      <div style="font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; max-width: 600px; margin: 2rem auto; color: #2d3748; line-height: 1.6; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);">
+        <!-- Header -->
+        <div style="background: linear-gradient(135deg, #2b6cb0 0%, #2c5282 100%); padding: 2rem; text-align: center; color: white;">
+          <h1 style="margin: 0; font-size: 1.8rem; font-weight: 600; letter-spacing: 0.5px;">Confirmación de QSO</h1>
+          <p style="margin: 0.5rem 0 0; opacity: 0.9; font-size: 1.1rem;">Tarjeta QSL Digital</p>
+        </div>
         
-        <p>Hola,</p>
-        <p>Adjunto encontrarás tu tarjeta QSL generada con los siguientes datos:</p>
+        <!-- Main Content -->
+        <div style="padding: 2rem;">
         
-        <div style="background-color: #f8f9fa; border-left: 4px solid #3498db; padding: 15px; margin: 20px 0;">
-          <h3 style="margin-top: 0; color: #2c3e50;">Datos del contacto</h3>
-          <table style="width: 100%; border-collapse: collapse;">
+        <div style="margin-bottom: 1.5rem;">
+          <p style="margin: 0 0 0.5rem; font-size: 1.1rem;">Hola <strong>${qslData.callsign}</strong>,</p>
+          <p style="margin: 0 0 1.5rem; color: #4a5568;">Adjunto encontrarás mi Tarjeta QSL generada con los siguientes datos:</p>
+        </div>
+        
+        <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 1.5rem; margin: 1.5rem 0; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);">
+          <h3 style="margin: 0 0 1rem; color: #2d3748; font-size: 1.25rem; font-weight: 600; display: flex; align-items: center;">
+            <span style="display: inline-block; width: 24px; height: 24px; background-color: #2b6cb0; color: white; border-radius: 50%; text-align: center; line-height: 24px; margin-right: 10px; font-size: 14px;">📡</span>
+            Datos del contacto
+          </h3>
+          <table style="width: 100%; border-collapse: separate; border-spacing: 0 0.5rem;">
             <tr>
-              <td style="padding: 8px 0; border-bottom: 1px solid #eee; width: 140px; font-weight: bold;">Indicativo:</td>
-              <td style="padding: 8px 0; border-bottom: 1px solid #eee;">${qslData.callsign || 'N/A'}</td>
+              <td style="padding: 0.5rem 0; font-weight: 600; color: #4a5568; width: 140px; vertical-align: top;">Indicativo:</td>
+              <td style="padding: 0.5rem 0; color: #2d3748; font-weight: 500;">${qslData.callsign || 'N/A'}</td>
             </tr>
             <tr>
-              <td style="padding: 8px 0; border-bottom: 1px solid #eee; font-weight: bold;">Fecha:</td>
-              <td style="padding: 8px 0; border-bottom: 1px solid #eee;">${formattedDate}</td>
+              <td style="padding: 0.5rem 0; font-weight: 600; color: #4a5568; vertical-align: top;">Fecha:</td>
+              <td style="padding: 0.5rem 0; color: #2d3748;">${formattedDate}</td>
             </tr>
             <tr>
-              <td style="padding: 8px 0; border-bottom: 1px solid #eee; font-weight: bold;">Hora:</td>
-              <td style="padding: 8px 0; border-bottom: 1px solid #eee;">${formattedTime}</td>
+              <td style="padding: 0.5rem 0; font-weight: 600; color: #4a5568; vertical-align: top;">Hora (UTC):</td>
+              <td style="padding: 0.5rem 0; color: #2d3748;">${formattedTime}</td>
             </tr>
             <tr>
-              <td style="padding: 8px 0; border-bottom: 1px solid #eee; font-weight: bold;">Frecuencia:</td>
-              <td style="padding: 8px 0; border-bottom: 1px solid #eee;">
+              <td style="padding: 0.5rem 0; font-weight: 600; color: #4a5568; vertical-align: top;">Frecuencia:</td>
+              <td style="padding: 0.5rem 0; color: #2d3748;">
                 ${frequency || 'N/A'} MHz
               </td>
             </tr>
             <tr>
-              <td style="padding: 8px 0; border-bottom: 1px solid #eee; font-weight: bold;">Banda:</td>
-              <td style="padding: 8px 0; border-bottom: 1px solid #eee;">${band || 'N/A'}</td>
+              <td style="padding: 0.5rem 0; font-weight: 600; color: #4a5568; vertical-align: top;">Banda:</td>
+              <td style="padding: 0.5rem 0; color: #2d3748;">${band || 'N/A'}</td>
             </tr>
             <tr>
-              <td style="padding: 8px 0; border-bottom: 1px solid #eee; font-weight: bold;">Modo:</td>
-              <td style="padding: 8px 0; border-bottom: 1px solid #eee;">${qslData.mode || 'N/A'}</td>
+              <td style="padding: 0.5rem 0; font-weight: 600; color: #4a5568; vertical-align: top;">Modo:</td>
+              <td style="padding: 0.5rem 0; color: #2d3748;">${qslData.mode || 'N/A'}</td>
             </tr>
             <tr>
-              <td style="padding: 8px 0; font-weight: bold;">RST:</td>
-              <td style="padding: 8px 0;">${qslData.report || 'N/A'}</td>
+              <td style="padding: 0.5rem 0; font-weight: 600; color: #4a5568; vertical-align: top;">RST:</td>
+              <td style="padding: 0.5rem 0; color: #2d3748; font-weight: 500; font-size: 1.1rem;">
+                <span style="color: #2f855a;">${qslData.report || 'N/A'}</span>
+              </td>
             </tr>
           </table>
         </div>
         
-        <p>¡Gracias por usar LU9WT QSL Creator! Esperamos que disfrutes de tu tarjeta QSL.</p>
-        
-        <p>73,<br>El equipo de LU9WT</p>
-        
-        <p style="font-size: 12px; color: #7f8c8d; margin-top: 30px; border-top: 1px solid #eee; padding-top: 15px; font-style: italic;">
-          Este es un mensaje automático, por favor no respondas a este correo.
-        </p>
+        <!-- Footer -->
+        <div style="margin-top: 2.5rem; padding-top: 2rem; border-top: 1px solid #e2e8f0;">
+          <p style="margin: 0 0 1.5rem; line-height: 1.7; color: #4a5568;">
+            ¡Gracias por el QSO, <strong>${qslData.callsign}</strong>! Ha sido un placer contactarte. 
+            He subido nuestro contacto a las siguientes plataformas: LoTW, eQSL, QRZ, HamQTH y ClubLog.
+          </p>
+          
+          <div style="margin: 2rem 0; text-align: center;">
+            <p style="margin: 0 0 0.5rem; font-size: 1.1rem; color: #2d3748; font-weight: 600;">
+              ¡Hasta la próxima en las ondas hertzianas!
+            </p>
+            <p style="margin: 0; font-size: 1.4rem; color: #2b6cb0; font-weight: 700; letter-spacing: 1px;">
+              73 & DX de LU9WT
+            </p>
+            <div style="margin-top: 1rem; font-size: 0.9rem; color: #718096;">
+              <p style="margin: 0.25rem 0;">
+                <a href="https://www.qrz.com/db/LU9WT" target="_blank" style="color: #2b6cb0; text-decoration: none;">
+                  QRZ.com/db/LU9WT
+                </a>
+              </p>
+            </div>
+          </div>
+          
+          <div style="margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid #e2e8f0; font-size: 0.75rem; color: #a0aec0; text-align: center;">
+            <p style="margin: 0 0 0.5rem;">
+              Este correo electrónico y la Tarjeta QSL <br> fueron generados automáticamente por el software
+            </p>
+            <p style="margin: 0; font-weight: 600; color: #718096;">
+              LU9WT QSL Creator
+            </p>
+          </div>
+        </div>
       </div>
     `
   }
