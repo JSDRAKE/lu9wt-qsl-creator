@@ -2,8 +2,9 @@ import { electronApp, is, optimizer } from '@electron-toolkit/utils'
 import { app, BrowserWindow, ipcMain, Menu, shell } from 'electron'
 import { dirname, join } from 'path'
 import { fileURLToPath } from 'url'
-import { getSettings, saveSettings } from './settings.js'
 import { setupEmailHandlers } from './controllers/emailController.js'
+import qrzController from './controllers/qrzController.js'
+import { getSettings, saveSettings } from './settings.js'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
@@ -218,6 +219,28 @@ app.whenReady().then(() => {
 
   // Configurar manejadores de correo electrónico
   setupEmailHandlers()
+
+  // Inicializar controlador QRZ
+  qrzController.initialize()
+
+  // Manejadores para la API de QRZ
+  ipcMain.handle('qrz-get-callsign-info', async (_, callsign) => {
+    try {
+      return await qrzController.getCallsignInfo(callsign)
+    } catch (error) {
+      console.error('Error en qrz-get-callsign-info:', error)
+      return { success: false, error: error.message }
+    }
+  })
+
+  ipcMain.handle('qrz-get-email', async (_, callsign) => {
+    try {
+      return await qrzController.getEmailFromCallsign(callsign)
+    } catch (error) {
+      console.error('Error en qrz-get-email:', error)
+      return { success: false, error: error.message }
+    }
+  })
 
   // Handle settings operations
   ipcMain.handle('get-settings', async () => {
