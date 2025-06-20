@@ -57,39 +57,41 @@ const EmailForm = ({ onBack, onSubmit }) => {
   )
 
   return (
-    <div className="email-form-container">
-      <h2>Enviar QSL por Correo</h2>
-      <form onSubmit={handleSubmit} className="email-form">
-        <div className="form-group">
-          <label htmlFor="email">Correo Electrónico del Destinatario</label>
-          <input
-            type="email"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="email@email.com"
-            required
-            disabled={isSubmitting}
-            className="form-input"
-          />
-        </div>
+    <>
+      <div className="email-form-container">
+        <h2>Enviar QSL por Correo</h2>
+        <form onSubmit={handleSubmit} className="email-form">
+          <div className="form-group">
+            <label htmlFor="email">Correo Electrónico del Destinatario</label>
+            <input
+              type="email"
+              id="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="email@email.com"
+              required
+              disabled={isSubmitting}
+              className="form-input"
+            />
+          </div>
 
-        <div className="form-actions">
-          <button
-            type="button"
-            onClick={onBack}
-            className="btn btn-secondary"
-            disabled={isSubmitting}
-          >
-            Atrás
-          </button>
-          <button type="submit" className="btn btn-primary" disabled={!email || isSubmitting}>
-            {isSubmitting ? 'Enviando...' : 'Enviar QSL'}
-          </button>
-        </div>
-      </form>
+          <div className="form-actions">
+            <button
+              type="button"
+              onClick={onBack}
+              className="btn btn-secondary"
+              disabled={isSubmitting}
+            >
+              Atrás
+            </button>
+            <button type="submit" className="btn btn-primary" disabled={!email || isSubmitting}>
+              {isSubmitting ? 'Enviando...' : 'Enviar QSL'}
+            </button>
+          </div>
+        </form>
+      </div>
       <EmailStatusModal isOpen={showStatusModal} status={emailStatus} onClose={handleCloseModal} />
-    </div>
+    </>
   )
 }
 
