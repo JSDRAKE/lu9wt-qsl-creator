@@ -9,51 +9,42 @@ const EmailForm = ({ onBack, onSubmit }) => {
   const [showStatusModal, setShowStatusModal] = useState(false)
   const [emailStatus, setEmailStatus] = useState('')
   const handleCloseModal = useCallback(() => {
+    // Solo restablecer el estado de envío si no hay un envío en progreso
+    if (emailStatus !== 'sending') {
+      setIsSubmitting(false)
+    }
     setShowStatusModal(false)
-    setEmailStatus('')
-  }, [setShowStatusModal, setEmailStatus])
-
-  const updateModalState = useCallback(
-    (_, __, stateUpdate = {}) => {
-      if (stateUpdate.showStatusModal !== undefined) {
-        setShowStatusModal(stateUpdate.showStatusModal)
-      }
-      if (stateUpdate.emailStatus !== undefined) {
-        setEmailStatus(stateUpdate.emailStatus)
-      }
-      if (stateUpdate.isSubmitting !== undefined) {
-        setIsSubmitting(stateUpdate.isSubmitting)
-      }
-    },
-    [setShowStatusModal, setEmailStatus, setIsSubmitting]
-  )
+    // No restablecer emailStatus aquí para permitir la transición de cierre
+  }, [emailStatus])
 
   const handleSubmit = useCallback(
     async (e) => {
       e.preventDefault()
-      if (!email) return
+      if (!email || isSubmitting) return
 
-      updateModalState('sending', 'Opening modal with status: sending', {
-        showStatusModal: true,
-        emailStatus: 'sending',
-        isSubmitting: true
-      })
+      // Iniciar el estado de envío
+      setIsSubmitting(true)
+      setShowStatusModal(true)
+      setEmailStatus('sending')
 
       try {
         await onSubmit(email)
-        updateModalState('success', 'Email sent successfully, updating status to success', {
-          emailStatus: 'success'
-        })
-        setEmail('') // Clear the email field after successful submission
+        // Envío exitoso
+        setEmailStatus('success')
+        setEmail('') // Limpiar el campo de correo después de un envío exitoso
+
+        // Cerrar automáticamente después de 3 segundos
+        setTimeout(() => {
+          setShowStatusModal(false)
+          setIsSubmitting(false)
+        }, 3000)
       } catch (error) {
         console.error('Error sending email:', error)
-        updateModalState('error', 'Error occurred, updating status to error', {
-          emailStatus: 'error',
-          isSubmitting: false
-        })
+        setEmailStatus('error')
+        setIsSubmitting(false) // Permitir reintentar en caso de error
       }
     },
-    [email, onSubmit, updateModalState]
+    [email, onSubmit, isSubmitting]
   )
 
   return (
