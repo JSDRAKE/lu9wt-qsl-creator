@@ -1,13 +1,16 @@
-import { useState, useCallback } from 'react'
 import PropTypes from 'prop-types'
-import EmailStatusModal from './EmailStatusModal'
+import { useCallback, useEffect, useState } from 'react'
+import { getEmailFromCallsign } from '../../utils/qrzApi'
 import '../styles/components/EmailForm.css'
+import EmailStatusModal from './EmailStatusModal'
 
-const EmailForm = ({ onBack, onSubmit }) => {
+const EmailForm = ({ onBack, onSubmit, qrzCallsign, onInputChange = () => {} }) => {
   const [email, setEmail] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isLookingUp, setIsLookingUp] = useState(false)
   const [showStatusModal, setShowStatusModal] = useState(false)
   const [emailStatus, setEmailStatus] = useState('')
+  const [statusMessage, setStatusMessage] = useState('')
   const handleCloseModal = useCallback(() => {
     // Solo restablecer el estado de envío si no hay un envío en progreso
     if (emailStatus !== 'sending') {
@@ -16,6 +19,51 @@ const EmailForm = ({ onBack, onSubmit }) => {
     setShowStatusModal(false)
     // No restablecer emailStatus aquí para permitir la transición de cierre
   }, [emailStatus])
+
+  // Lookup email from QRZ when component mounts or when callsign changes
+  useEffect(() => {
+    const fetchEmailFromQRZ = async () => {
+      if (!qrzCallsign) return
+
+      setIsLookingUp(true)
+      setStatusMessage(`Buscando correo electrónico para ${qrzCallsign} en QRZ...`)
+
+      try {
+        const result = await getEmailFromCallsign(qrzCallsign)
+
+        if (result.success && result.email) {
+          setEmail(result.email)
+          setStatusMessage(
+            `¡Correo electrónico encontrado para ${result.callsign}${
+              result.name ? ` (${result.name})` : ''
+            }!`
+          )
+
+          // Guardar el nombre del operador en el estado del formulario
+          if (result.name) {
+            // Actualizar el estado del formulario con el nombre del operador
+            const event = {
+              target: {
+                name: 'operatorName',
+                value: result.name
+              }
+            }
+            // Llamar al manejador de cambios para actualizar el estado del formulario
+            onInputChange(event)
+          }
+        } else {
+          setStatusMessage(result.error || 'No se encontró correo electrónico en QRZ')
+        }
+      } catch (error) {
+        console.error('Error fetching email from QRZ:', error)
+        setStatusMessage('Error al buscar el correo en QRZ')
+      } finally {
+        setIsLookingUp(false)
+      }
+    }
+
+    fetchEmailFromQRZ()
+  }, [qrzCallsign, onInputChange])
 
   const handleSubmit = useCallback(
     async (e) => {
@@ -26,21 +74,25 @@ const EmailForm = ({ onBack, onSubmit }) => {
       setIsSubmitting(true)
       setShowStatusModal(true)
       setEmailStatus('sending')
+      setStatusMessage('Enviando correo electrónico...')
 
       try {
         await onSubmit(email)
         // Envío exitoso
         setEmailStatus('success')
+        setStatusMessage('¡Correo electrónico enviado con éxito!')
         setEmail('') // Limpiar el campo de correo después de un envío exitoso
 
         // Cerrar automáticamente después de 3 segundos
         setTimeout(() => {
           setShowStatusModal(false)
           setIsSubmitting(false)
+          setStatusMessage('')
         }, 3000)
       } catch (error) {
         console.error('Error sending email:', error)
         setEmailStatus('error')
+        setStatusMessage('Error al enviar el correo electrónico. Por favor, inténtalo de nuevo.')
         setIsSubmitting(false) // Permitir reintentar en caso de error
       }
     },
@@ -54,16 +106,22 @@ const EmailForm = ({ onBack, onSubmit }) => {
         <form onSubmit={handleSubmit} className="email-form">
           <div className="form-group">
             <label htmlFor="email">Correo Electrónico del Destinatario</label>
-            <input
-              type="email"
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="email@email.com"
-              required
-              disabled={isSubmitting}
-              className="form-input"
-            />
+            <div className="email-input-container">
+              <input
+                type="email"
+                id="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="email@email.com"
+                required
+                disabled={isSubmitting || isLookingUp}
+                className="form-input"
+              />
+              {qrzCallsign && isLookingUp && <span className="qrz-status">Buscando en QRZ...</span>}
+              {statusMessage && !isLookingUp && (
+                <div className={`status-message ${emailStatus || ''}`.trim()}>{statusMessage}</div>
+              )}
+            </div>
           </div>
 
           <div className="form-actions">
@@ -81,14 +139,21 @@ const EmailForm = ({ onBack, onSubmit }) => {
           </div>
         </form>
       </div>
-      <EmailStatusModal isOpen={showStatusModal} status={emailStatus} onClose={handleCloseModal} />
+      <EmailStatusModal
+        isOpen={showStatusModal}
+        status={emailStatus}
+        message={statusMessage}
+        onClose={handleCloseModal}
+      />
     </>
   )
 }
 
 EmailForm.propTypes = {
   onBack: PropTypes.func.isRequired,
-  onSubmit: PropTypes.func.isRequired
+  onSubmit: PropTypes.func.isRequired,
+  qrzCallsign: PropTypes.string,
+  onInputChange: PropTypes.func
 }
 
 export default EmailForm
