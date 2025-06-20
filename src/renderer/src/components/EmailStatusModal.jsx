@@ -33,16 +33,16 @@ const EmailStatusModal = ({ isOpen, status, onClose }) => {
   const getStatusIconClass = () => `email-status-icon ${status || ''}`
 
   return (
-    <div className="email-status-modal-overlay">
-      <div className="email-status-modal-content">
+    <div className="email-status-modal-overlay" onClick={onClose}>
+      <div className="email-status-modal-content" onClick={(e) => e.stopPropagation()}>
         <div className="email-status-modal-header">
           <h3 className="email-status-modal-title">Estado del Envío</h3>
-          <button onClick={onClose} className="email-status-modal-close">
+          <button onClick={onClose} className="email-status-modal-close" aria-label="Cerrar modal">
             &times;
           </button>
         </div>
         <div className="email-status-modal-body">
-          <div className={getStatusIconClass()}>
+          <div className={getStatusIconClass()} aria-hidden="true">
             {status === 'sending' && <div className="email-status-spinner" />}
             {status === 'success' && '✓'}
             {status === 'error' && '✕'}
@@ -51,7 +51,7 @@ const EmailStatusModal = ({ isOpen, status, onClose }) => {
         </div>
         {status === 'error' && (
           <div className="email-status-footer">
-            <button onClick={onClose} className="email-status-button">
+            <button onClick={onClose} className="email-status-button" autoFocus>
               Cerrar
             </button>
           </div>
