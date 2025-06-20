@@ -23,7 +23,7 @@ const SettingsDialog = ({ isOpen, onClose }) => {
   const [isLoading, setIsLoading] = useState(true)
   const [newProfileName, setNewProfileName] = useState('')
   const [selectedProfileId, setSelectedProfileId] = useState('')
-  const [activeTab, setActiveTab] = useState('email')
+  const [activeTab, setActiveTab] = useState('qrz')
   const [settings, setSettings] = useState({
     // Default settings (will be overridden by loaded settings)
     theme: 'light',
