@@ -108,8 +108,7 @@ class EmailService {
       const info = await this.transporter.sendMail({
         from: `"${process.env.EMAIL_FROM_NAME || 'QSL Creator'}" <${process.env.EMAIL_FROM}>`,
         to,
-        subject: `QSL Card - ${callsign} - ${formattedDate}`,
-        text: this.generatePlainTextEmail(qslData),
+        subject: `${callsign} aqui tienes mi Tarjeta QSL`,
         html: this.generateHtmlEmail(qslData),
         attachments: [
           {
@@ -132,63 +131,37 @@ class EmailService {
     }
   }
 
-  generatePlainTextEmail(qslData) {
-    // Extract frequency and band information
-    let frequency = qslData.frequency || ''
-    let band = ''
+  /**
+   * Detecta la banda a partir de la frecuencia en MHz
+   * @param {string} frequency - Frecuencia en formato de cadena (puede contener comas o puntos)
+   * @returns {string} - Nombre de la banda o frecuencia formateada
+   */
+  _detectBand(frequency) {
+    if (!frequency) return ''
 
-    // If frequency is in MHz format (e.g., "14.250"), extract the band
-    if (frequency && frequency.includes('.')) {
-      const mhz = parseFloat(frequency)
-      if (!isNaN(mhz)) {
-        if (mhz >= 1.8 && mhz <= 2.0) band = '160m'
-        else if (mhz >= 3.5 && mhz <= 4.0) band = '80m'
-        else if (mhz >= 7.0 && mhz <= 7.3) band = '40m'
-        else if (mhz >= 14.0 && mhz <= 14.35) band = '20m'
-        else if (mhz >= 21.0 && mhz <= 21.45) band = '15m'
-        else if (mhz >= 28.0 && mhz <= 29.7) band = '10m'
-        else band = `${mhz} MHz`
-      }
-    }
+    // Reemplazar comas por puntos y limpiar caracteres no numéricos
+    const cleanFrequency = frequency
+      .toString()
+      .replace(/,/g, '.')
+      .replace(/[^0-9.]/g, '')
+    const mhz = parseFloat(cleanFrequency)
 
-    return `
-Hola,
+    if (isNaN(mhz)) return ''
 
-Adjunto encontrarás tu tarjeta QSL.
+    if (mhz >= 1.8 && mhz <= 2.0) return '160m'
+    if (mhz >= 3.5 && mhz <= 4.0) return '80m'
+    if (mhz >= 7.0 && mhz <= 7.3) return '40m'
+    if (mhz >= 14.0 && mhz <= 14.35) return '20m'
+    if (mhz >= 21.0 && mhz <= 21.45) return '15m'
+    if (mhz >= 28.0 && mhz <= 29.7) return '10m'
 
-Datos del contacto:
-Callsign: ${qslData.callsign || 'N/A'}
-Fecha: ${qslData.date || 'N/A'}
-Hora: ${qslData.time || 'N/A'}
-Frecuencia: ${frequency} ${band ? `(${band})` : ''}
-Banda: ${band || 'N/A'}
-Modo: ${qslData.mode || 'N/A'}
-RST: ${qslData.report || 'N/A'}
-
-73!
-`
+    return `${mhz} MHz`
   }
 
   generateHtmlEmail(qslData) {
-    // Extract frequency and band information
-    let frequency = qslData.frequency || ''
-    let band = ''
-
-    // Detect band from frequency if available
-    if (frequency) {
-      // Replace comma with dot and remove any other non-numeric characters except dot
-      const cleanFrequency = frequency.replace(/,/g, '.').replace(/[^0-9.]/g, '')
-      const mhz = parseFloat(cleanFrequency)
-      if (!isNaN(mhz)) {
-        if (mhz >= 1.8 && mhz <= 2.0) band = '160m'
-        else if (mhz >= 3.5 && mhz <= 4.0) band = '80m'
-        else if (mhz >= 7.0 && mhz <= 7.3) band = '40m'
-        else if (mhz >= 14.0 && mhz <= 14.35) band = '20m'
-        else if (mhz >= 21.0 && mhz <= 21.45) band = '15m'
-        else if (mhz >= 28.0 && mhz <= 29.7) band = '10m'
-        else band = `${mhz} MHz`
-      }
-    }
+    // Extraer y formatear frecuencia y banda
+    const frequency = qslData.frequency || ''
+    const band = this._detectBand(frequency)
 
     // Format the date if available
     let formattedDate = qslData.date || 'N/A'
@@ -292,8 +265,11 @@ RST: ${qslData.report || 'N/A'}
             <p style="margin: 0 0 0.5rem;">
               Este correo electrónico y la Tarjeta QSL <br> fueron generados automáticamente por el software
             </p>
-            <p style="margin: 0; font-weight: 600; color: #718096;">
+            <p style="margin: 0 0 0.25rem; font-weight: 600; color: #718096;">
               LU9WT QSL Creator
+            </p>
+            <p style="margin: 0; font-size: 0.7rem; color: #a0aec0;">
+              © ${new Date().getFullYear()} JSDRAKE - LU9WT - Todos los derechos reservados
             </p>
           </div>
         </div>
