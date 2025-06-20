@@ -1,3 +1,9 @@
+/* Animation for form elements */
+@keyframes signalPulse {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
 /* EmailForm Component - Modern Radio Style */
 .email-form-container {
   background: var(--form-bg, rgba(10, 26, 36, 0.8));
