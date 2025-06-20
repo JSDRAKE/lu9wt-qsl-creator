@@ -2,7 +2,7 @@ import PropTypes from 'prop-types'
 import { useEffect } from 'react'
 import '../styles/components/EmailStatusModal.css'
 
-const EmailStatusModal = ({ isOpen, status, onClose }) => {
+const EmailStatusModal = ({ isOpen, status, message, onClose }) => {
   // Auto-close on success after 3 seconds
   useEffect(() => {
     if (status === 'success' && isOpen) {
@@ -18,6 +18,9 @@ const EmailStatusModal = ({ isOpen, status, onClose }) => {
   }
 
   const getStatusMessage = () => {
+    // Use custom message if provided, otherwise use default messages
+    if (message) return message
+
     switch (status) {
       case 'sending':
         return 'Enviando QSL...'
@@ -61,9 +64,15 @@ const EmailStatusModal = ({ isOpen, status, onClose }) => {
   )
 }
 
+EmailStatusModal.defaultProps = {
+  status: '',
+  message: ''
+}
+
 EmailStatusModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   status: PropTypes.oneOf(['sending', 'success', 'error', '']),
+  message: PropTypes.string,
   onClose: PropTypes.func.isRequired
 }
 
