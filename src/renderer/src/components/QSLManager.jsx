@@ -4,7 +4,7 @@ import '../styles/components/QSLManager.css'
 import EmailForm from './EmailForm'
 import QSLGenerated from './QSLGenerated'
 
-const QSLManager = ({ generatedQSL, onSendEmail, onDownload }) => {
+const QSLManager = ({ generatedQSL, onSendEmail, onDownload, onInputChange }) => {
   const [showEmailForm, setShowEmailForm] = useState(false)
 
   const handleSend = () => {
@@ -30,7 +30,14 @@ const QSLManager = ({ generatedQSL, onSendEmail, onDownload }) => {
   if (!generatedQSL) return null
 
   if (showEmailForm) {
-    return <EmailForm onBack={handleBack} onSubmit={handleEmailSubmit} />
+    return (
+      <EmailForm
+        onBack={handleBack}
+        onSubmit={handleEmailSubmit}
+        qrzCallsign={generatedQSL.callsign}
+        onInputChange={onInputChange}
+      />
+    )
   }
 
   return <QSLGenerated qslData={generatedQSL} onDownload={onDownload} onSend={handleSend} />
@@ -39,7 +46,8 @@ const QSLManager = ({ generatedQSL, onSendEmail, onDownload }) => {
 QSLManager.propTypes = {
   generatedQSL: PropTypes.object,
   onSendEmail: PropTypes.func.isRequired,
-  onDownload: PropTypes.func.isRequired
+  onDownload: PropTypes.func.isRequired,
+  onInputChange: PropTypes.func
 }
 
 export default QSLManager
