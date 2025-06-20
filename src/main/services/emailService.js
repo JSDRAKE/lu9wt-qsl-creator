@@ -193,7 +193,15 @@ class EmailService {
         <div style="padding: 2rem;">
         
         <div style="margin-bottom: 1.5rem;">
-          <p style="margin: 0 0 0.5rem; font-size: 1.1rem;">Hola <strong>${qslData.callsign}</strong>,</p>
+          ${(() => {
+            let displayName = qslData.callsign || ''
+            if (qslData.operatorName) {
+              // Tomar solo el primer nombre
+              const firstName = qslData.operatorName.split(' ')[0]
+              displayName = `${firstName} ${qslData.callsign || ''}`.trim()
+            }
+            return `<p style="margin: 0 0 0.5rem; font-size: 1.1rem;">Hola <strong>${displayName}</strong>,</p>`
+          })()}
           <p style="margin: 0 0 1.5rem; color: #4a5568;">Adjunto encontrarás mi Tarjeta QSL generada con los siguientes datos:</p>
         </div>
         
