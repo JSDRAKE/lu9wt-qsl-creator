@@ -92,6 +92,11 @@
   text-transform: uppercase;
 }
 
+.email-input-container {
+  position: relative;
+  width: 100%;
+}
+
 .form-group input[type='email'] {
   width: 100%;
   padding: 10px 12px;
@@ -154,6 +159,43 @@
     opacity: 0.3;
     transform: scaleX(0.5);
   }
+}
+
+/* QRZ Status Styles */
+.qrz-status {
+  display: block;
+  color: #4ec9b0;
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+  font-family: 'Courier New', monospace;
+  animation: pulse 2s infinite;
+}
+
+.status-message {
+  display: block;
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+}
+
+.status-message.success {
+  color: #4caf50;
+  background-color: rgba(76, 175, 80, 0.1);
+  border-left: 3px solid #4caf50;
+}
+
+.status-message.error {
+  color: #f44336;
+  background-color: rgba(244, 67, 54, 0.1);
+  border-left: 3px solid #f44336;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.6; }
+  50% { opacity: 1; }
+  100% { opacity: 0.6; }
 }
 
 /* Responsive adjustments */
