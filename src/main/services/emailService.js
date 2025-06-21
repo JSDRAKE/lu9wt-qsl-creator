@@ -167,6 +167,10 @@ class EmailService {
     if (mhz >= 14.0 && mhz <= 14.35) return '20m'
     if (mhz >= 21.0 && mhz <= 21.45) return '15m'
     if (mhz >= 28.0 && mhz <= 29.7) return '10m'
+    if (mhz >= 50.0 && mhz <= 54.0) return '6m'
+    if (mhz >= 144.0 && mhz <= 148.0) return '2m'
+    if (mhz >= 222.0 && mhz <= 225.0) return '70cm'
+    if (mhz >= 430.0 && mhz <= 440.0) return '23cm'
 
     return `${mhz} MHz`
   }
@@ -179,7 +183,7 @@ class EmailService {
     if (qslData.time) {
       const [hours, minutes] = qslData.time.split(':')
       if (hours && minutes) {
-        formattedTime = `${hours.padStart(2, '0')}:${minutes.padStart(2, '0')} UTC`
+        formattedTime = `${hours.padStart(2, '0')}:${minutes.padStart(2, '0')}`
       }
     }
 
