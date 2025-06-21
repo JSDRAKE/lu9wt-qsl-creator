@@ -12,7 +12,7 @@ function setupEmailHandlers() {
    * @param {string} qslImage - Imagen de la QSL en formato base64
    * @returns {Promise<{success: boolean, messageId?: string, error?: string}>} - Resultado de la operación
    */
-  ipcMain.handle('send-qsl-email', async (event, { to, qslData, qslImage }) => {
+  ipcMain.handle('send-qsl-email', async (event, { to, qslData, qslImage, language = 'es' }) => {
     try {
       console.log('Solicitud de envío de QSL a:', to)
       console.log('Datos de QSL:', JSON.stringify(qslData, null, 2))
@@ -25,7 +25,7 @@ function setupEmailHandlers() {
         }
       }
 
-      const result = await emailService.sendQSL(to, qslData, qslImage)
+      const result = await emailService.sendQSL(to, qslData, qslImage, language)
 
       if (result.success) {
         console.log('Correo enviado exitosamente:', result.messageId)
