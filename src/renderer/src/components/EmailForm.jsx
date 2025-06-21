@@ -6,6 +6,7 @@ import EmailStatusModal from './EmailStatusModal'
 
 const EmailForm = ({ onBack, onSubmit, qrzCallsign, onInputChange = () => {} }) => {
   const [email, setEmail] = useState('')
+  const [language, setLanguage] = useState('es') // Default to Spanish
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isLookingUp, setIsLookingUp] = useState(false)
   const [showStatusModal, setShowStatusModal] = useState(false)
@@ -74,13 +75,17 @@ const EmailForm = ({ onBack, onSubmit, qrzCallsign, onInputChange = () => {} }) 
       setIsSubmitting(true)
       setShowStatusModal(true)
       setEmailStatus('sending')
-      setStatusMessage('Enviando correo electrónico...')
+      setStatusMessage(language === 'es' ? 'Enviando correo electrónico...' : 'Sending email...')
 
       try {
-        await onSubmit(email)
+        await onSubmit(email, language)
         // Envío exitoso
         setEmailStatus('success')
-        setStatusMessage('¡Correo electrónico enviado con éxito!')
+        const successMessage = {
+          es: '¡Correo electrónico enviado con éxito!',
+          en: 'Email sent successfully!'
+        }
+        setStatusMessage(successMessage[language] || successMessage.es)
         setEmail('') // Limpiar el campo de correo después de un envío exitoso
 
         // Cerrar automáticamente después de 3 segundos
@@ -92,11 +97,15 @@ const EmailForm = ({ onBack, onSubmit, qrzCallsign, onInputChange = () => {} }) 
       } catch (error) {
         console.error('Error sending email:', error)
         setEmailStatus('error')
-        setStatusMessage('Error al enviar el correo electrónico. Por favor, inténtalo de nuevo.')
+        const errorMessage = {
+          es: 'Error al enviar el correo electrónico. Por favor, inténtalo de nuevo.',
+          en: 'Error sending email. Please try again.'
+        }
+        setStatusMessage(errorMessage[language] || errorMessage.es)
         setIsSubmitting(false) // Permitir reintentar en caso de error
       }
     },
-    [email, onSubmit, isSubmitting]
+    [email, onSubmit, isSubmitting, language]
   )
 
   return (
@@ -122,6 +131,20 @@ const EmailForm = ({ onBack, onSubmit, qrzCallsign, onInputChange = () => {} }) 
                 <div className={`status-message ${emailStatus || ''}`.trim()}>{statusMessage}</div>
               )}
             </div>
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="language">Idioma del Correo</label>
+            <select
+              id="language"
+              value={language}
+              onChange={(e) => setLanguage(e.target.value)}
+              className="form-input"
+              disabled={isSubmitting}
+            >
+              <option value="es">Español</option>
+              <option value="en">English</option>
+            </select>
           </div>
 
           <div className="form-actions">
@@ -151,7 +174,7 @@ const EmailForm = ({ onBack, onSubmit, qrzCallsign, onInputChange = () => {} }) 
 
 EmailForm.propTypes = {
   onBack: PropTypes.func.isRequired,
-  onSubmit: PropTypes.func.isRequired,
+  onSubmit: PropTypes.func.isRequired, // Should accept (email, language) parameters
   qrzCallsign: PropTypes.string,
   onInputChange: PropTypes.func
 }
