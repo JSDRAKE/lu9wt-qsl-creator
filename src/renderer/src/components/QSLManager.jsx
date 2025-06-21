@@ -11,9 +11,9 @@ const QSLManager = ({ generatedQSL, onSendEmail, onDownload, onInputChange }) =>
     setShowEmailForm(true)
   }
 
-  const handleEmailSubmit = async (email) => {
+  const handleEmailSubmit = async (email, language = 'es') => {
     try {
-      await onSendEmail(email)
+      await onSendEmail(email, language)
       // No cerramos el formulario aquí, dejamos que EmailForm maneje el cierre
       // después de que se complete el envío exitosamente
     } catch (error) {
