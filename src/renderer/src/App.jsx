@@ -201,15 +201,19 @@ function App() {
 
   // Email submission handler
   const handleEmailSubmit = useCallback(
-    async (email) => {
+    async (email, language = 'es') => {
       if (!generatedQSL) {
-        throw new Error('No hay una QSL generada')
+        throw new Error(language === 'es' ? 'No hay una QSL generada' : 'No QSL generated')
       }
 
       // Obtener la URL de la imagen de la QSL
       if (!generatedQSL.imageUrl) {
         console.error('No se pudo encontrar la URL de la imagen de la QSL')
-        throw new Error('No se pudo encontrar la imagen de la QSL para enviar')
+        throw new Error(
+          language === 'es'
+            ? 'No se pudo encontrar la imagen de la QSL para enviar'
+            : 'Could not find QSL image to send'
+        )
       }
       const qslImage = generatedQSL.imageUrl
 
@@ -224,13 +228,14 @@ function App() {
         report: generatedQSL.report || ''
       }
 
-      console.log('Sending QSL to:', email)
+      console.log('Sending QSL to:', email, 'Language:', language)
 
       // Enviar el correo a través de IPC
       const result = await window.electron.ipcRenderer.invoke('send-qsl-email', {
         to: email,
         qslData,
-        qslImage
+        qslImage,
+        language
       })
 
       if (!result.success) {
