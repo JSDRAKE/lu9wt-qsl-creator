@@ -143,6 +143,7 @@ const EmailForm = ({ onBack, onSubmit, qrzCallsign, onInputChange = () => {} }) 
               disabled={isSubmitting}
             >
               <option value="es">Español</option>
+              <option value="es_ar">Argentina</option>
               <option value="en">English</option>
             </select>
           </div>
