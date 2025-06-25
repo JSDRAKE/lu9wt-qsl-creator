@@ -4,7 +4,9 @@ import { contextBridge, ipcRenderer } from 'electron'
 const api = {
   // Settings API
   getSettings: () => ipcRenderer.invoke('get-settings'),
-  saveSettings: (settings) => ipcRenderer.invoke('save-settings', settings)
+  saveSettings: (settings) => ipcRenderer.invoke('save-settings', settings),
+  // App Info
+  getAppInfo: () => ipcRenderer.invoke('getAppInfo')
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to

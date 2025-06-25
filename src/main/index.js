@@ -1,10 +1,11 @@
 import { electronApp, is, optimizer } from '@electron-toolkit/utils'
 import { app, BrowserWindow, ipcMain, Menu, shell } from 'electron'
-import { dirname, join } from 'path'
+import { dirname, join, resolve } from 'path'
 import { fileURLToPath } from 'url'
 import { setupEmailHandlers } from './controllers/emailController.js'
 import qrzController from './controllers/qrzController.js'
 import { getSettings, saveSettings } from './settings.js'
+import { readFile } from 'fs/promises'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
@@ -222,6 +223,29 @@ app.whenReady().then(() => {
 
   // Inicializar controlador QRZ
   qrzController.initialize()
+
+  // Handler to get app info from package.json
+  ipcMain.handle('getAppInfo', async () => {
+    try {
+      const packagePath = resolve(process.cwd(), 'package.json')
+      const packageData = await readFile(packagePath, 'utf8')
+      const pkg = JSON.parse(packageData)
+
+      return {
+        name: pkg.name,
+        displayName: pkg.displayName || pkg.name,
+        version: pkg.version,
+        author: pkg.author,
+        description: pkg.description,
+        homepage: pkg.homepage,
+        email: pkg.email,
+        license: pkg.license
+      }
+    } catch (error) {
+      console.error('Error reading package.json:', error)
+      return {}
+    }
+  })
 
   // Manejadores para la API de QRZ
   ipcMain.handle('qrz-get-callsign-info', async (_, callsign) => {

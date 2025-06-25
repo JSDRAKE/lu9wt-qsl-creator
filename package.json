@@ -1,11 +1,13 @@
 {
   "name": "lu9wt-qsl-creator",
   "version": "1.0.0-beta",
-  "displayName": "QSL Creator by LU9WT",
-  "description": "QSL Creator by LU9WT",
+  "displayName": "Digital QSL Card Creator",
+  "description": "Herramienta para la creación y envío de tarjetas QSL para radioaficionados. Diseñada para ser intuitiva y eficiente, permitiendo generar tarjetas QSL personalizadas con información del QSO.",
   "main": "./out/main/index.js",
   "author": "JSDRAKE - LU9WT",
   "homepage": "https://www.jsdrake.com.ar",
+  "license": "MIT",
+  "email": "jsdrake@jsdrake.com.ar",
   "scripts": {
     "format": "prettier --write .",
     "lint": "eslint --cache .",

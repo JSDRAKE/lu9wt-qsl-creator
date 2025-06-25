@@ -9,8 +9,8 @@ out
 .env
 
 # Document files
-.txt
-.pdf
+*.txt
+*.pdf
 
 # Ignore all JPG files except those in src/renderer/src/assets/qsl/
 *.jpg

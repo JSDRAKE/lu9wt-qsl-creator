@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useState, useEffect } from 'react'
 import AboutDialog from './components/AboutDialog'
 import Header from './components/Header'
 import InitialSetupDialog from './components/InitialSetupDialog'
@@ -22,8 +22,32 @@ function App() {
     initialSetup: false
   })
 
-  const [appInfo, setAppInfo] = useState(null)
+  // App state
   const [, setIsFirstRun] = useState(false)
+  const [appInfo, setAppInfo] = useState(null)
+
+  // Fetch app info from package.json
+  useEffect(() => {
+    const fetchAppInfo = async () => {
+      try {
+        const info = await window.api.getAppInfo()
+        setAppInfo({
+          name: info.name,
+          displayName: info.displayName,
+          version: info.version,
+          author: info.author,
+          description: info.description,
+          homepage: info.homepage,
+          email: info.email,
+          license: info.license
+        })
+      } catch (error) {
+        console.error('Error fetching app info:', error)
+      }
+    }
+
+    fetchAppInfo()
+  }, [])
 
   // Custom hooks
   const {
@@ -280,7 +304,7 @@ function App() {
       <AboutDialog
         isOpen={dialogs.about}
         onClose={() => setDialogs((prev) => ({ ...prev, about: false }))}
-        appInfo={appInfo}
+        appInfo={appInfo || {}}
       />
 
       <SettingsDialog
