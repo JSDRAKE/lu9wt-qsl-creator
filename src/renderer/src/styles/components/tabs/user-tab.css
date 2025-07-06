@@ -1,0 +1,239 @@
+/* UserTab.css - Styles for the User Information tab */
+@import './_base-tab.css';
+
+/* Base styles from tab-container */
+.user-tab {
+  padding: 1.5rem;
+  height: 100%;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
+.user-tab::-webkit-scrollbar {
+  width: 6px;
+}
+
+.user-tab::-webkit-scrollbar-track {
+  background: var(--scrollbar-track, rgba(30, 58, 76, 0.3));
+  border-radius: 3px;
+}
+
+.user-tab::-webkit-scrollbar-thumb {
+  background-color: var(--scrollbar-thumb, #3b82f6);
+  border-radius: 3px;
+}
+
+/* User Section */
+.user-section {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: var(--card-bg, rgba(30, 58, 76, 0.3));
+  border: 1px solid var(--card-border, rgba(30, 58, 76, 0.5));
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.user-section h3 {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  font-size: 1.2rem;
+  color: #fff;
+  font-family: 'Courier New', monospace;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  position: relative;
+  padding-bottom: 0.5rem;
+}
+
+.user-section h3::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 60px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--primary-color, #3b82f6), transparent);
+}
+
+/* Form Group overrides */
+.user-tab .form-group {
+  margin-bottom: 1.75rem;
+}
+
+/* Avatar Section */
+.avatar-section {
+  display: flex;
+  align-items: center;
+  margin-bottom: 2rem;
+  gap: 1.5rem;
+}
+
+.avatar-preview {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid var(--card-border, rgba(30, 58, 76, 0.5));
+  background-color: var(--input-bg, rgba(30, 58, 76, 0.6));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatar-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatar-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.avatar-actions .btn {
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+}
+
+/* Form Layout */
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Error state */
+.form-input.error {
+  border-color: var(--error-color, #ef4444);
+}
+
+.form-input.error:focus {
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.3);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .user-tab {
+    padding: 1rem;
+  }
+  
+  .user-section {
+    padding: 1.25rem;
+  }
+  
+  .avatar-section {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .avatar-actions {
+    width: 100%;
+  }
+  
+  .avatar-actions .btn {
+    width: 100%;
+  }
+  
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .form-actions {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  .form-actions .btn {
+    width: 100%;
+  }
+  
+  .user-section h3 {
+    font-size: 1.1rem;
+    margin-bottom: 1.25rem;
+  }
+}
+
+/* Theme-specific overrides */
+[data-theme='light'] .user-tab {
+  --input-bg: #ffffff;
+  --input-border: #d1d5db;
+  --text-primary: #1f2937;
+  --text-secondary: #4b5563;
+  --card-bg: #ffffff;
+  --card-border: #e5e7eb;
+}
+
+[data-theme='light'] .user-section {
+  background-color: #ffffff;
+  border-color: #e5e7eb;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+[data-theme='light'] .user-section h3 {
+  color: #1f2937;
+}
+
+[data-theme='light'] .avatar-preview {
+  border-color: #d1d5db;
+  background-color: #f9fafb;
+}
+
+[data-theme='light'] .form-input {
+  background-color: #ffffff;
+  border-color: #d1d5db;
+  color: #1f2937;
+}
+
+[data-theme='light'] .form-input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+  background-color: #ffffff;
+}
+
+[data-theme='light'] .form-input::placeholder {
+  color: #9ca3af;
+}
+
+[data-theme='light'] .form-input:disabled {
+  background-color: #f3f4f6;
+  color: #9ca3af;
+}
+
+[data-theme='light'] .form-input.error {
+  border-color: #ef4444;
+}
+
+[data-theme='light'] .form-input.error:focus {
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
+}
+
+/* Animation for form elements */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Apply animation to form groups */
+.user-tab .form-group {
+  animation: fadeIn 0.3s ease-out forwards;
+  opacity: 0;
+}
+
+/* Stagger the animations */
+.user-tab .form-group:nth-child(1) { animation-delay: 0.05s; }
+.user-tab .form-group:nth-child(2) { animation-delay: 0.1s; }
+.user-tab .form-group:nth-child(3) { animation-delay: 0.15s; }
+.user-tab .form-group:nth-child(4) { animation-delay: 0.2s; }
+.user-tab .form-group:nth-child(5) { animation-delay: 0.25s; }

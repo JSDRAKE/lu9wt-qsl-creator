@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types'
 import { useCallback } from 'react'
+import '../../styles/components/tabs/user-tab.css'
 
 const UserTab = ({ userData, onSettingsChange }) => {
   // Handle input changes for user data
@@ -15,7 +16,7 @@ const UserTab = ({ userData, onSettingsChange }) => {
   )
 
   return (
-    <div className="tab-content" id="user-tabpanel">
+    <div className="tab-content user-tab" id="user-tabpanel">
       <div className="form-group">
         <label htmlFor="userName">Nombre de Usuario</label>
         <input
