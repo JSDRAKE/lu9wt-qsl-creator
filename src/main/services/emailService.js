@@ -117,13 +117,37 @@ class EmailService {
           ? `${callsign} here's my QSL Card`
           : `${callsign} aquí tienes mi Tarjeta QSL`
 
+      // Get the first name from the qslData or use the callsign as fallback
+      const firstName = qslData.firstName || qslData.callsign
+
       // Generate HTML email based on language
       const html =
         language === 'es_ar'
-          ? this.generateArgentinaEmail(qslData, formattedDate, formattedTime)
+          ? generateArgentinaEmail(
+              qslData,
+              formattedDate,
+              formattedTime,
+              qslData.frequency,
+              qslData.band,
+              firstName
+            )
           : language === 'es'
-            ? this.generateSpanishEmail(qslData, formattedDate, formattedTime)
-            : this.generateEnglishEmail(qslData, formattedDate, formattedTime)
+            ? generateSpanishEmail(
+                qslData,
+                formattedDate,
+                formattedTime,
+                qslData.frequency,
+                qslData.band,
+                firstName
+              )
+            : generateEnglishEmail(
+                qslData,
+                formattedDate,
+                formattedTime,
+                qslData.frequency,
+                qslData.band,
+                firstName
+              )
 
       const info = await this.transporter.sendMail({
         from: `"${process.env.EMAIL_FROM_NAME || 'LU9WT'}" <${process.env.EMAIL_FROM}>`,
