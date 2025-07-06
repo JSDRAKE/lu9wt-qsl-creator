@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types'
-import { useCallback, useState, useEffect } from 'react'
-import { FiUserCheck, FiUserPlus, FiEdit, FiTrash2, FiSave, FiX } from 'react-icons/fi'
+import { useCallback, useEffect, useState } from 'react'
+import { FiEdit, FiSave, FiTrash2, FiUserCheck, FiUserPlus, FiX } from 'react-icons/fi'
+import '../../styles/components/tabs/profile-tab.css'
 
 const ProfileTab = ({
   profiles = [],
