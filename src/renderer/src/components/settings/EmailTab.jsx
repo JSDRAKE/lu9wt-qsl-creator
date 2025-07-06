@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types'
 import { useCallback } from 'react'
 import { FiAlertCircle, FiCheckCircle } from 'react-icons/fi'
+import '../../styles/components/tabs/email-tab.css'
 
 const EmailTab = ({ settings, onSettingsChange }) => {
   // Handle email authentication
@@ -19,7 +20,7 @@ const EmailTab = ({ settings, onSettingsChange }) => {
   }, [onSettingsChange])
 
   return (
-    <div className="tab-content" id="email-tabpanel">
+    <div className="tab-content email-tab" id="email-tabpanel">
       <div className="email-auth-container">
         <h3>Autenticación de Correo Electrónico</h3>
         <p className="email-auth-description">

@@ -1,0 +1,248 @@
+/* EmailTab.css - Styles for the Email Authentication tab */
+@import './_base-tab.css';
+
+/* Base styles from tab-container */
+.email-tab {
+  padding: 1.5rem;
+  height: 100%;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
+.email-tab::-webkit-scrollbar {
+  width: 6px;
+}
+
+.email-tab::-webkit-scrollbar-track {
+  background: var(--scrollbar-track, rgba(30, 58, 76, 0.3));
+  border-radius: 3px;
+}
+
+.email-tab::-webkit-scrollbar-thumb {
+  background-color: var(--scrollbar-thumb, #3b82f6);
+  border-radius: 3px;
+}
+
+/* Email Auth Container */
+.email-auth-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 2rem;
+  background: var(--card-bg, rgba(30, 58, 76, 0.3));
+  border-radius: 12px;
+  border: 1px solid var(--card-border, rgba(30, 58, 76, 0.5));
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.email-auth-container h3 {
+  color: var(--text-primary, #e0e0e0);
+  margin: 0 0 1.5rem 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  position: relative;
+  padding-bottom: 0.75rem;
+  font-family: 'Courier New', monospace;
+  text-transform: uppercase;
+}
+
+.email-auth-container h3::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--primary-color, #3b82f6), transparent);
+  border-radius: 2px;
+}
+
+.email-auth-description {
+  color: var(--text-secondary, #9ca3af);
+  margin: 0 0 2rem 0;
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
+/* Status Styles */
+.email-status {
+  margin: 2rem 0;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.status-verified,
+.status-not-verified {
+  display: flex;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  font-size: 0.95rem;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.status-verified {
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  background-color: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+}
+
+.status-not-verified {
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  background-color: rgba(245, 158, 11, 0.1);
+  color: #f59e0b;
+}
+
+.status-icon {
+  margin-right: 0.75rem;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Auth Actions */
+.email-auth-actions {
+  display: flex;
+  gap: 1rem;
+  margin: 2.5rem 0;
+  flex-wrap: wrap;
+}
+
+.email-auth-actions .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  border: none;
+  flex: 1 1 auto;
+  min-width: 180px;
+}
+
+/* Hint Text */
+.email-auth-hint {
+  color: var(--text-secondary, #9ca3af);
+  font-size: 0.9rem;
+  margin: 2rem 0 0 0;
+  padding: 1.25rem;
+  background-color: var(--hint-bg, rgba(30, 58, 76, 0.3));
+  border-radius: 8px;
+  border-left: 4px solid var(--primary-color, #3b82f6);
+  line-height: 1.6;
+  font-style: italic;
+}
+
+/* Loading State */
+.email-auth-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  text-align: center;
+}
+
+.loading-spinner {
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 3px solid rgba(59, 130, 246, 0.2);
+  border-radius: 50%;
+  border-top-color: var(--primary-color, #3b82f6);
+  animation: spin 1s ease-in-out infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loading-text {
+  color: var(--text-secondary, #9ca3af);
+  margin-top: 1rem;
+  font-size: 0.95rem;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 640px) {
+  .email-tab {
+    padding: 1rem;
+  }
+  
+  .email-auth-container {
+    padding: 1.25rem;
+  }
+  
+  .email-auth-actions {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  .email-auth-actions .btn {
+    width: 100%;
+    margin-left: 0 !important;
+  }
+}
+
+/* Theme-specific overrides */
+[data-theme='light'] .email-tab {
+  --text-primary: #1f2937;
+  --text-secondary: #4b5563;
+  --card-bg: #ffffff;
+  --card-border: #e5e7eb;
+  --hint-bg: #f9fafb;
+}
+
+[data-theme='light'] .email-auth-container {
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+[data-theme='light'] .email-auth-hint {
+  background-color: #f3f4f6;
+  border-left-color: #3b82f6;
+}
+
+/* Animation */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* Loading state */
+.email-auth-actions .btn.loading {
+  position: relative;
+  color: transparent;
+  pointer-events: none;
+}
+
+.email-auth-actions .btn.loading::after {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  top: 50%;
+  left: 50%;
+  margin: -8px 0 0 -8px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: white;
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
