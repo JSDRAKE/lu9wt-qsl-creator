@@ -1,0 +1,310 @@
+/* ExternalServicesTab.css - Styles for the External Services tab */
+@import './_base-tab.css';
+
+/* Base styles from tab-container */
+.external-services-tab {
+  padding: 1.5rem;
+  height: 100%;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
+.external-services-tab::-webkit-scrollbar {
+  width: 6px;
+}
+
+.external-services-tab::-webkit-scrollbar-track {
+  background: var(--scrollbar-track, rgba(30, 58, 76, 0.3));
+  border-radius: 3px;
+}
+
+.external-services-tab::-webkit-scrollbar-thumb {
+  background-color: var(--scrollbar-thumb, #3b82f6);
+  border-radius: 3px;
+}
+
+/* Services Grid */
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+/* Service Credentials Container */
+.service-credentials {
+  background: var(--card-bg, rgba(30, 58, 76, 0.3));
+  border: 1px solid var(--card-border, rgba(30, 58, 76, 0.5));
+  border-radius: 12px;
+  padding: 1.75rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.service-credentials:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.service-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--card-border, rgba(30, 58, 76, 0.5));
+}
+
+.service-icon {
+  width: 32px;
+  height: 32px;
+  margin-right: 1rem;
+  flex-shrink: 0;
+  border-radius: 6px;
+  background-color: var(--primary-color, #3b82f6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.1rem;
+}
+
+.service-title-container {
+  flex: 1;
+  min-width: 0;
+}
+
+.service-credentials h4 {
+  margin: 0;
+  color: var(--text-primary, #e0e0e0);
+  font-size: 1.1rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.service-description {
+  color: var(--text-secondary, #9ca3af);
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+  line-height: 1.4;
+}
+
+/* Service Status */
+.service-status {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.8rem;
+  padding: 0.3rem 0.8rem;
+  border-radius: 9999px;
+  font-weight: 500;
+  margin-left: 1rem;
+  white-space: nowrap;
+}
+
+.service-status::before {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 0.5rem;
+}
+
+.service-status.connected {
+  background-color: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+}
+
+.service-status.connected::before {
+  background-color: #10b981;
+}
+
+.service-status.disconnected {
+  background-color: rgba(245, 158, 11, 0.1);
+  color: #f59e0b;
+}
+
+.service-status.disconnected::before {
+  background-color: #f59e0b;
+}
+
+/* Service Form */
+.service-form {
+  margin-top: auto;
+  padding-top: 1rem;
+}
+
+.service-form .form-group {
+  margin-bottom: 1.25rem;
+  position: relative;
+}
+
+.service-form .form-group:last-child {
+  margin-bottom: 0;
+}
+
+.service-form label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--text-secondary, #9ca3af);
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.service-form .form-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background-color: var(--input-bg, rgba(30, 58, 76, 0.6));
+  border: 1px solid var(--input-border, #1e3a4c);
+  border-radius: 8px;
+  color: var(--text-primary, #e0e0e0);
+  font-family: 'Courier New', monospace;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+}
+
+.service-form .form-input:focus {
+  outline: none;
+  border-color: var(--primary-color, #3b82f6);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+  background-color: rgba(59, 130, 246, 0.1);
+}
+
+/* Password Toggle */
+.password-toggle {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--text-secondary, #9ca3af);
+  cursor: pointer;
+  padding: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.password-toggle:hover {
+  color: var(--text-primary, #e0e0e0);
+  background-color: var(--hover-bg, rgba(255, 255, 255, 0.1));
+}
+
+/* Save Button */
+.save-button {
+  width: 100%;
+  margin-top: 1rem;
+  padding: 0.75rem 1.5rem;
+  background-color: var(--primary-color, #3b82f6);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.save-button:hover {
+  background-color: var(--primary-hover, #2563eb);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
+}
+
+.save-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .services-grid {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+  
+  .service-credentials {
+    padding: 1.5rem;
+  }
+  
+  .service-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .service-status {
+    margin-left: 0;
+    margin-top: 0.5rem;
+    align-self: flex-start;
+  }
+}
+
+/* Theme-specific overrides */
+[data-theme='light'] .external-services-tab {
+  --text-primary: #1f2937;
+  --text-secondary: #4b5563;
+  --card-bg: #ffffff;
+  --card-border: #e5e7eb;
+  --input-bg: #f9fafb;
+  --input-border: #d1d5db;
+  --hover-bg: rgba(0, 0, 0, 0.05);
+}
+
+[data-theme='light'] .service-credentials {
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+[data-theme='light'] .service-credentials:hover {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+[data-theme='light'] .service-form .form-input {
+  background-color: #ffffff;
+  border-color: #d1d5db;
+  color: #1f2937;
+}
+
+[data-theme='light'] .password-toggle:hover {
+  background-color: #f3f4f6;
+}
+
+[data-theme='light'] .service-credentials .form-input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Apply animation to service cards */
+.service-credentials {
+  animation: fadeIn 0.4s ease-out forwards;
+  opacity: 0;
+}
+
+.service-credentials:nth-child(1) { animation-delay: 0.1s; }
+.service-credentials:nth-child(2) { animation-delay: 0.2s; }

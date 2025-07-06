@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types'
 import { useCallback } from 'react'
+import '../../styles/components/tabs/external-services-tab.css'
 
 const ExternalServicesTab = ({ settings, onSettingsChange }) => {
   // Handle input changes for external services
@@ -23,7 +24,7 @@ const ExternalServicesTab = ({ settings, onSettingsChange }) => {
   )
 
   return (
-    <div className="tab-content" id="external-tabpanel">
+    <div className="tab-content external-services-tab" id="external-tabpanel">
       <div className="service-credentials">
         <h4>QRZ.com</h4>
         <div className="form-group">
