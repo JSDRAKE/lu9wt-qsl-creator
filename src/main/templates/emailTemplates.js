@@ -12,9 +12,17 @@
  * @param {string} formattedTime - Hora formateada
  * @param {string} frequency - Frecuencia de la comunicación
  * @param {string} band - Banda de la comunicación
+ * @param {string} [firstName] - Nombre del destinatario (opcional)
  * @returns {string} HTML del correo
  */
-const generateSpanishEmail = (qslData, formattedDate, formattedTime, frequency, band) => {
+const generateSpanishEmail = (
+  qslData,
+  formattedDate,
+  formattedTime,
+  frequency,
+  band,
+  firstName = qslData.firstName || qslData.callsign
+) => {
   return `
     <div style="font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; max-width: 600px; margin: 2rem auto; color: #2d3748; line-height: 1.6; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);">
       <!-- Header -->
@@ -83,7 +91,7 @@ const generateSpanishEmail = (qslData, formattedDate, formattedTime, frequency, 
       <!-- Footer -->
       <div style="margin-top: 2.5rem; padding-top: 2rem; border-top: 1px solid #e2e8f0;">
         <p style="margin: 0 0 1.5rem; line-height: 1.7; color: #4a5568;">
-          ¡Gracias por el QSO, <strong>${qslData.callsign}</strong>! Ha sido un placer contactarte. 
+          ¡Gracias por el QSO, <strong>${firstName}</strong>! Ha sido un placer contactarte. 
           He subido nuestro contacto a las siguientes plataformas: LoTW, eQSL, QRZ, HamQTH y ClubLog.
         </p>
         
@@ -108,7 +116,7 @@ const generateSpanishEmail = (qslData, formattedDate, formattedTime, frequency, 
             Este correo electrónico y la Tarjeta QSL <br> fueron generados automáticamente por el software
           </p>
           <p style="margin: 0 0 0.25rem; font-weight: 600; color: #718096;">
-            LU9WT QSL Creator
+            Digital QSL Card Creator by LU9WT
           </p>
           <p style="margin: 0; font-size: 0.7rem; color: #a0aec0;">
             © ${new Date().getFullYear()} JSDRAKE - LU9WT - Todos los derechos reservados
@@ -126,9 +134,17 @@ const generateSpanishEmail = (qslData, formattedDate, formattedTime, frequency, 
  * @param {string} formattedTime - Hora formateada
  * @param {string} frequency - Frecuencia de la comunicación
  * @param {string} band - Banda de la comunicación
+ * @param {string} [firstName] - Nombre del destinatario (opcional)
  * @returns {string} HTML del correo
  */
-const generateArgentinaEmail = (qslData, formattedDate, formattedTime, frequency, band) => {
+const generateArgentinaEmail = (
+  qslData,
+  formattedDate,
+  formattedTime,
+  frequency,
+  band,
+  firstName = qslData.firstName || qslData.callsign
+) => {
   return `
     <div style="font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; max-width: 600px; margin: 2rem auto; color: #2d3748; line-height: 1.6; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);">
       <!-- Header -->
@@ -197,7 +213,7 @@ const generateArgentinaEmail = (qslData, formattedDate, formattedTime, frequency
       <!-- Footer -->
       <div style="margin-top: 2.5rem; padding-top: 2rem; border-top: 1px solid #e2e8f0;">
         <p style="margin: 0 0 1.5rem; line-height: 1.7; color: #4a5568;">
-          ¡Gracias por el QSO, <strong>${qslData.callsign}</strong>! Ha sido un placer contactarte. 
+          ¡Gracias por el QSO, <strong>${firstName}</strong>! Ha sido un placer contactarte. 
           He subido nuestro contacto a las siguientes plataformas: LoTW, eQSL, QRZ, HamQTH y ClubLog. <br>
           A LdA lo subo el 1 de cada mes. Si necesitas que suba a alguna otra plataforma adicional, por favor házmelo saber.
         </p>
@@ -223,7 +239,7 @@ const generateArgentinaEmail = (qslData, formattedDate, formattedTime, frequency
             Este correo electrónico y la Tarjeta QSL <br> fueron generados automáticamente por el software
           </p>
           <p style="margin: 0 0 0.25rem; font-weight: 600; color: #718096;">
-            LU9WT QSL Creator
+            Digital QSL Card Creator by LU9WT
           </p>
           <p style="margin: 0; font-size: 0.7rem; color: #a0aec0;">
             © ${new Date().getFullYear()} JSDRAKE - LU9WT - Todos los derechos reservados
@@ -241,9 +257,17 @@ const generateArgentinaEmail = (qslData, formattedDate, formattedTime, frequency
  * @param {string} formattedTime - Hora formateada
  * @param {string} frequency - Frecuencia de la comunicación
  * @param {string} band - Banda de la comunicación
+ * @param {string} [firstName] - Nombre del destinatario (opcional)
  * @returns {string} HTML del correo
  */
-const generateEnglishEmail = (qslData, formattedDate, formattedTime, frequency, band) => {
+const generateEnglishEmail = (
+  qslData,
+  formattedDate,
+  formattedTime,
+  frequency,
+  band,
+  firstName = qslData.firstName || qslData.callsign
+) => {
   return `
     <div style="font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; max-width: 600px; margin: 2rem auto; color: #2d3748; line-height: 1.6; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);">
       <!-- Header -->
@@ -312,7 +336,7 @@ const generateEnglishEmail = (qslData, formattedDate, formattedTime, frequency, 
       <!-- Footer -->
       <div style="margin-top: 2.5rem; padding-top: 2rem; border-top: 1px solid #e2e8f0;">
         <p style="margin: 0 0 1.5rem; line-height: 1.7; color: #4a5568;">
-          Thank you for the QSO, <strong>${qslData.callsign}</strong>! It was a pleasure making contact with you.
+          Thank you for the QSO, <strong>${firstName}</strong>! It was a pleasure making contact with you.
           I've uploaded our contact to the following platforms: LoTW, eQSL, QRZ, HamQTH, and ClubLog.
         </p>
         
@@ -337,7 +361,7 @@ const generateEnglishEmail = (qslData, formattedDate, formattedTime, frequency, 
             This email and the QSL Card <br> were automatically generated by the software
           </p>
           <p style="margin: 0 0 0.25rem; font-weight: 600; color: #718096;">
-            LU9WT QSL Creator
+            Digital QSL Card Creator by LU9WT
           </p>
           <p style="margin: 0; font-size: 0.7rem; color: #a0aec0;">
             © ${new Date().getFullYear()} JSDRAKE - LU9WT - All rights reserved
@@ -348,4 +372,4 @@ const generateEnglishEmail = (qslData, formattedDate, formattedTime, frequency, 
   `
 }
 
-export { generateSpanishEmail, generateArgentinaEmail, generateEnglishEmail }
+export { generateArgentinaEmail, generateEnglishEmail, generateSpanishEmail }
