@@ -1,34 +1,16 @@
 import PropTypes from 'prop-types'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-// IPC is now handled through the preload script
-import {
-  FiAlertCircle,
-  FiCheckCircle,
-  FiEdit,
-  FiGlobe,
-  FiMail,
-  FiRotateCw,
-  FiSave,
-  FiSettings,
-  FiTrash2,
-  FiUser,
-  FiUserCheck,
-  FiUserPlus,
-  FiX
-} from 'react-icons/fi'
+import { FiRotateCw, FiSave, FiX } from 'react-icons/fi'
+import SettingsTabs from './settings/SettingsTabs'
 import '../styles/dialogs/settings-dialog.css'
 
 const SettingsDialog = ({ isOpen, onClose }) => {
   // State declarations at the top
-  const [isCreatingProfile, setIsCreatingProfile] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
-  const [newProfileName, setNewProfileName] = useState('')
   const [selectedProfileId, setSelectedProfileId] = useState('')
   const [activeTab, setActiveTab] = useState('general')
   const [settings, setSettings] = useState({
     // Default settings (will be overridden by loaded settings)
-    theme: 'light',
-    language: 'es',
     notifications: true,
     profiles: [],
     activeProfileId: '',
@@ -40,7 +22,7 @@ const SettingsDialog = ({ isOpen, onClose }) => {
     email: '',
     // Email authentication
     emailVerified: false,
-    // External services
+    // External services (managed by ExternalServicesTab)
     qrzUsername: '',
     qrzPassword: '',
     hamqthUsername: '',
@@ -54,8 +36,6 @@ const SettingsDialog = ({ isOpen, onClose }) => {
   // Default settings
   const defaultSettings = useMemo(
     () => ({
-      theme: 'light',
-      language: 'es',
       notifications: true,
       profiles: [],
       activeProfileId: '',
@@ -165,205 +145,27 @@ const SettingsDialog = ({ isOpen, onClose }) => {
     [settings, saveSettings]
   )
 
-  // Get current profile data (commented out for now as it's not currently used)
-  // const getCurrentProfileData = useCallback(() => {
-  //   if (!settings.activeProfileId) return {}
-  //   return settings.profiles.find(
-  //     (profile) => profile.id === settings.activeProfileId
-  //   ) || {}
-  // }, [settings.activeProfileId, settings.profiles])
+  // Profile data is now managed by the ProfileTab component
 
-  // Handle email authentication
-  const handleEmailAuth = useCallback(async () => {
-    // TODO: Implement OAuth2 authentication
-    // This will be connected to the actual OAuth2 flow later
-    try {
-      // Simulate authentication
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-      await updateSettings({ emailVerified: true })
-    } catch (error) {
-      console.error('Authentication failed:', error)
-    }
-  }, [updateSettings])
-
-  // Handle input changes for both direct field updates and form elements
-  const handleInputChange = useCallback(
-    (e) => {
-      const { name, value, type, checked } = e.target
-      const fieldValue = type === 'checkbox' ? checked : value
-
-      // Definir campos específicos del perfil
-      const profileFields = [
-        'userName',
-        'callsign',
-        'city',
-        'gridLocator',
-        'email',
-        'qrzUsername',
-        'qrzPassword',
-        'hamqthUsername',
-        'hamqthPassword'
-      ]
-
-      // Si hay un perfil activo y el campo pertenece a los datos del perfil
-      if (settings.activeProfileId && profileFields.includes(name)) {
-        // Actualizar los datos del perfil
-        const updatedProfiles = settings.profiles.map((profile) =>
-          profile.id === settings.activeProfileId ? { ...profile, [name]: fieldValue } : profile
-        )
-
-        // Actualizar tanto el perfil como la configuración raíz
-        updateSettings({
-          profiles: updatedProfiles,
-          [name]: fieldValue
-        })
-      } else {
-        // Para campos que no son del perfil o cuando no hay perfil activo
-        updateSettings({ [name]: fieldValue })
-      }
+  // Handle general settings changes from GeneralTab
+  const handleGeneralSettingsChange = useCallback(
+    (generalSettings) => {
+      updateSettings(generalSettings)
     },
-    [settings.activeProfileId, settings.profiles, updateSettings]
+    [updateSettings]
   )
 
-  // Handle profile selection change (only updates the selection, not the active profile)
-  const handleProfileSelect = useCallback((e) => {
-    setSelectedProfileId(e.target.value)
+  // Handle profile changes
+  const handleProfileChange = useCallback((updates) => {
+    setSettings((prev) => ({
+      ...prev,
+      ...updates
+    }))
+    // Update selected profile ID if it's being changed
+    if (updates.activeProfileId) {
+      setSelectedProfileId(updates.activeProfileId)
+    }
   }, [])
-
-  // Handle profile activation
-  const handleActivateProfile = useCallback(() => {
-    if (!selectedProfileId) return
-
-    // Encontrar el perfil seleccionado
-    const selectedProfile = settings.profiles.find((profile) => profile.id === selectedProfileId)
-    if (!selectedProfile) return
-
-    // Extraer los datos del perfil con valores por defecto
-    // eslint-disable-next-line no-unused-vars
-    const { id, name: profileName, ...profileData } = selectedProfile || {}
-
-    // Extraer los campos que necesitamos
-    const {
-      userName = '',
-      callsign = '',
-      city = '',
-      gridLocator = '',
-      email = '',
-      qrzUsername = '',
-      qrzPassword = '',
-      hamqthUsername = '',
-      hamqthPassword = ''
-    } = profileData
-
-    // Actualizar la configuración con los datos del perfil
-    updateSettings({
-      activeProfileId: selectedProfileId,
-      userName,
-      callsign,
-      city,
-      gridLocator,
-      email,
-      qrzUsername,
-      qrzPassword,
-      hamqthUsername,
-      hamqthPassword
-    })
-  }, [selectedProfileId, settings.profiles, updateSettings])
-
-  const handleNewProfile = () => {
-    setIsCreatingProfile(true)
-    setNewProfileName(`Perfil ${settings.profiles.length + 1}`)
-
-    // Clear all user and external service data
-    setSettings((prev) => ({
-      ...prev,
-      // User data
-      callsign: '',
-      name: '',
-      city: '',
-      gridLocator: '',
-      email: '',
-
-      // External services
-      externalApiKey: '',
-      qrzUsername: '',
-      qrzPassword: '',
-      hamqthUsername: '',
-      hamqthPassword: '',
-
-      // Sync settings
-      autoSync: false,
-      syncInterval: 60
-    }))
-  }
-
-  const handleSaveNewProfile = () => {
-    if (!newProfileName.trim()) return
-
-    const newProfile = {
-      id: Date.now().toString(),
-      name: newProfileName.trim(), // Nombre del perfil
-      // Inicializar campos vacíos para el nuevo perfil
-      userName: '',
-      callsign: '',
-      city: '',
-      gridLocator: '',
-      email: '',
-      qrzUsername: '',
-      qrzPassword: '',
-      hamqthUsername: '',
-      hamqthPassword: ''
-    }
-
-    const updatedProfiles = [...settings.profiles, newProfile]
-    updateSettings({
-      profiles: updatedProfiles,
-      activeProfileId: newProfile.id,
-      // No copiamos el nombre del perfil al estado raíz, solo los datos del usuario
-      userName: settings.userName || '',
-      callsign: settings.callsign || '',
-      city: settings.city || '',
-      gridLocator: settings.gridLocator || '',
-      email: settings.email || '',
-      qrzUsername: settings.qrzUsername || '',
-      qrzPassword: settings.qrzPassword || '',
-      hamqthUsername: settings.hamqthUsername || '',
-      hamqthPassword: settings.hamqthPassword || ''
-    })
-    setSelectedProfileId(newProfile.id)
-    setIsCreatingProfile(false)
-    setNewProfileName('')
-  }
-
-  const handleCancelNewProfile = () => {
-    setIsCreatingProfile(false)
-    setNewProfileName('')
-  }
-
-  const handleDeleteProfile = () => {
-    if (settings.profiles.length <= 1) {
-      alert('No se puede eliminar el último perfil')
-      return
-    }
-    setSettings((prev) => ({
-      ...prev,
-      profiles: prev.profiles.filter((p) => p.id !== prev.activeProfileId),
-      activeProfileId: prev.profiles[0].id
-    }))
-  }
-
-  const handleEditProfile = () => {
-    const currentProfile = settings.profiles.find((p) => p.id === settings.activeProfileId)
-    if (!currentProfile) return
-    const newName = prompt('Nuevo nombre para el perfil:', currentProfile.name)
-    if (!newName || newName === currentProfile.name) return
-    setSettings((prev) => ({
-      ...prev,
-      profiles: prev.profiles.map((p) =>
-        p.id === prev.activeProfileId ? { ...p, name: newName } : p
-      )
-    }))
-  }
 
   const handleKeyDown = useCallback((e) => e.key === 'Escape' && onClose(), [onClose])
 
@@ -407,343 +209,14 @@ const SettingsDialog = ({ isOpen, onClose }) => {
     )
   }
 
-  const renderTabContent = () => {
-    switch (activeTab) {
-      case 'general':
-        return (
-          <div className="tab-content" id="general-tabpanel">
-            <div className="form-group">
-              <label htmlFor="theme">Tema</label>
-              <select
-                id="theme"
-                name="theme"
-                value={settings.theme}
-                onChange={handleInputChange}
-                className="form-select"
-              >
-                <option value="light">Claro</option>
-                <option value="dark">Oscuro</option>
-                <option value="system">Sistema</option>
-              </select>
-            </div>
-            <div className="form-group">
-              <label htmlFor="language">Idioma</label>
-              <select
-                id="language"
-                name="language"
-                value={settings.language}
-                onChange={handleInputChange}
-                className="form-select"
-              >
-                <option value="es">Español</option>
-                <option value="en">English</option>
-              </select>
-            </div>
-          </div>
-        )
-
-      case 'profile':
-        return (
-          <div className="tab-content profile-tab" id="profile-tabpanel">
-            <div className="form-group">
-              <label htmlFor="profile-selector">Seleccionar Perfil</label>
-              <div className="profile-selector">
-                <div className="profile-selector-container">
-                  <select
-                    id="profile-selector"
-                    value={selectedProfileId || ''}
-                    onChange={handleProfileSelect}
-                    className="form-select"
-                  >
-                    {settings.profiles.map((profile) => (
-                      <option key={profile.id} value={profile.id}>
-                        {profile.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="profile-actions">
-                  <div className="profile-actions-row">
-                    <button
-                      type="button"
-                      className="btn btn-small btn-primary btn-icon"
-                      onClick={handleActivateProfile}
-                      title="Activar perfil"
-                      disabled={
-                        isCreatingProfile ||
-                        !selectedProfileId ||
-                        selectedProfileId === settings.activeProfileId
-                      }
-                    >
-                      <FiUserCheck />
-                      <span>Activar</span>
-                    </button>
-                    <button
-                      type="button"
-                      className="btn btn-small btn-success btn-icon"
-                      onClick={handleNewProfile}
-                      title="Nuevo perfil"
-                      disabled={isCreatingProfile}
-                    >
-                      <FiUserPlus />
-                      <span>Nuevo</span>
-                    </button>
-                  </div>
-                  <div className="profile-actions-row">
-                    <button
-                      type="button"
-                      className="btn btn-small btn-icon"
-                      onClick={handleEditProfile}
-                      title="Editar nombre del perfil"
-                      disabled={isCreatingProfile}
-                    >
-                      <FiEdit />
-                      <span>Editar</span>
-                    </button>
-                    <button
-                      type="button"
-                      className="btn btn-small btn-danger btn-icon"
-                      onClick={handleDeleteProfile}
-                      disabled={settings.profiles.length <= 1 || isCreatingProfile}
-                      title="Eliminar perfil"
-                    >
-                      <FiTrash2 />
-                      <span>Borrar</span>
-                    </button>
-                  </div>
-                </div>
-                {isCreatingProfile && (
-                  <div className="new-profile-input" style={{ marginTop: '1rem' }}>
-                    <input
-                      type="text"
-                      className="form-control input-sm"
-                      value={newProfileName}
-                      onChange={(e) => setNewProfileName(e.target.value)}
-                      placeholder="Nombre del perfil"
-                      autoFocus
-                      style={{ width: '100%', marginBottom: '0.5rem' }}
-                      onKeyDown={(e) => e.key === 'Enter' && handleSaveNewProfile()}
-                    />
-                    <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
-                      <button
-                        type="button"
-                        className="btn btn-small btn-success btn-icon"
-                        onClick={handleSaveNewProfile}
-                        title="Guardar perfil"
-                        disabled={!newProfileName.trim()}
-                      >
-                        <FiSave />
-                        <span>Guardar</span>
-                      </button>
-                      <button
-                        type="button"
-                        className="btn btn-small btn-icon"
-                        onClick={handleCancelNewProfile}
-                        title="Cancelar"
-                      >
-                        <FiX />
-                        <span>Cancelar</span>
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        )
-
-      case 'user':
-        return (
-          <div className="tab-content" id="user-tabpanel">
-            <div className="form-group">
-              <label htmlFor="userName">Nombre de Usuario</label>
-              <input
-                type="text"
-                id="userName"
-                name="userName"
-                value={settings.userName || ''}
-                onChange={handleInputChange}
-                className="form-input"
-                placeholder="Tu nombre de usuario"
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="callsign">Indicativo</label>
-              <input
-                type="text"
-                id="callsign"
-                name="callsign"
-                value={settings.callsign || ''}
-                onChange={handleInputChange}
-                className="form-input"
-                placeholder="Ej: LU9WT"
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="city">Ciudad</label>
-              <input
-                type="text"
-                id="city"
-                name="city"
-                value={settings.city || ''}
-                onChange={handleInputChange}
-                className="form-input"
-                placeholder="Ej: Buenos Aires"
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="gridLocator">Grid Locator</label>
-              <input
-                type="text"
-                id="gridLocator"
-                name="gridLocator"
-                value={settings.gridLocator || ''}
-                onChange={handleInputChange}
-                className="form-input"
-                placeholder="Ej: GF05tj"
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="email">Correo Electrónico</label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                value={settings.email || ''}
-                onChange={handleInputChange}
-                className="form-input"
-                placeholder="tu@email.com"
-              />
-            </div>
-          </div>
-        )
-
-      case 'email':
-        return (
-          <div className="tab-content" id="email-tabpanel">
-            <div className="email-auth-container">
-              <h3>Autenticación de Correo Electrónico</h3>
-              <p className="email-auth-description">
-                Conecta tu cuenta de correo electrónico para habilitar el envío de QSLs por email.
-                Utilizamos OAuth2 para una conexión segura.
-              </p>
-
-              <div className="email-status">
-                {settings.emailVerified ? (
-                  <div className="status-verified">
-                    <FiCheckCircle className="status-icon" />
-                    <span>Correo verificado: {settings.email || 'No configurado'}</span>
-                  </div>
-                ) : (
-                  <div className="status-not-verified">
-                    <FiAlertCircle className="status-icon" />
-                    <span>No verificado</span>
-                  </div>
-                )}
-              </div>
-
-              <div className="email-auth-actions">
-                <button
-                  type="button"
-                  className={`btn ${settings.emailVerified ? 'btn-secondary' : 'btn-primary'}`}
-                  onClick={handleEmailAuth}
-                  disabled={!settings.email}
-                >
-                  {settings.emailVerified ? 'Cambiar cuenta' : 'Conectar con Google'}
-                </button>
-
-                {settings.emailVerified && (
-                  <button
-                    type="button"
-                    className="btn btn-danger"
-                    onClick={() =>
-                      setSettings((prev) => ({
-                        ...prev,
-                        emailVerified: false
-                      }))
-                    }
-                    style={{ marginLeft: '10px' }}
-                  >
-                    Desconectar
-                  </button>
-                )}
-              </div>
-
-              {!settings.email && (
-                <p className="email-auth-hint">
-                  Por favor, configura tu dirección de correo electrónico en la pestaña de Usuario
-                  primero.
-                </p>
-              )}
-            </div>
-          </div>
-        )
-
-      case 'external':
-        return (
-          <div className="tab-content" id="external-tabpanel">
-            <div className="service-credentials">
-              <h4>QRZ.com</h4>
-              <div className="form-group">
-                <label htmlFor="qrzUsername">Usuario</label>
-                <input
-                  type="text"
-                  id="qrzUsername"
-                  name="qrzUsername"
-                  value={settings.qrzUsername || ''}
-                  onChange={handleInputChange}
-                  className="form-input"
-                  placeholder="Usuario de QRZ.com"
-                />
-              </div>
-              <div className="form-group">
-                <label htmlFor="qrzPassword">Contraseña</label>
-                <input
-                  type="password"
-                  id="qrzPassword"
-                  name="qrzPassword"
-                  value={settings.qrzPassword || ''}
-                  onChange={handleInputChange}
-                  className="form-input"
-                  placeholder="Contraseña de QRZ.com"
-                />
-              </div>
-            </div>
-
-            <div className="service-credentials" style={{ marginTop: '1.5rem' }}>
-              <h4>HamQTH.com</h4>
-              <div className="form-group">
-                <label htmlFor="hamqthUsername">Usuario</label>
-                <input
-                  type="text"
-                  id="hamqthUsername"
-                  name="hamqthUsername"
-                  value={settings.hamqthUsername || ''}
-                  onChange={handleInputChange}
-                  className="form-input"
-                  placeholder="Usuario de HamQTH.com"
-                />
-              </div>
-              <div className="form-group">
-                <label htmlFor="hamqthPassword">Contraseña</label>
-                <input
-                  type="password"
-                  id="hamqthPassword"
-                  name="hamqthPassword"
-                  value={settings.hamqthPassword || ''}
-                  onChange={handleInputChange}
-                  className="form-input"
-                  placeholder="Contraseña de HamQTH.com"
-                />
-              </div>
-            </div>
-          </div>
-        )
-
-      default:
-        return null
-    }
+  const tabContentProps = {
+    settings,
+    activeProfileId: settings.activeProfileId,
+    selectedProfileId,
+    onProfileChange: handleProfileChange,
+    onSettingsChange: updateSettings,
+    onSelectProfile: setSelectedProfileId,
+    onGeneralSettingsChange: handleGeneralSettingsChange
   }
 
   return (
@@ -753,68 +226,11 @@ const SettingsDialog = ({ isOpen, onClose }) => {
           <h2>CONFIGURACIÓN</h2>
         </div>
 
-        <div className="settings-tabs-container">
-          <div className="settings-tabs">
-            <button
-              className={`tab-button ${activeTab === 'general' ? 'active' : ''}`}
-              onClick={() => setActiveTab('general')}
-              aria-selected={activeTab === 'general'}
-              aria-controls="general-tabpanel"
-              id="general-tab"
-              role="tab"
-            >
-              <FiSettings className="tab-icon" />
-              <span>General</span>
-            </button>
-            <button
-              className={`tab-button ${activeTab === 'profile' ? 'active' : ''}`}
-              onClick={() => setActiveTab('profile')}
-              aria-selected={activeTab === 'profile'}
-              aria-controls="profile-tabpanel"
-              id="profile-tab"
-              role="tab"
-            >
-              <FiUser className="tab-icon" />
-              <span>Perfiles</span>
-            </button>
-            <button
-              className={`tab-button ${activeTab === 'user' ? 'active' : ''}`}
-              onClick={() => setActiveTab('user')}
-              aria-selected={activeTab === 'user'}
-              aria-controls="user-tabpanel"
-              id="user-tab"
-              role="tab"
-            >
-              <FiUserCheck className="tab-icon" />
-              <span>Usuario</span>
-            </button>
-
-            <button
-              className={`tab-button ${activeTab === 'email' ? 'active' : ''}`}
-              onClick={() => setActiveTab('email')}
-              aria-selected={activeTab === 'email'}
-              aria-controls="email-tabpanel"
-              id="email-tab"
-              role="tab"
-            >
-              <FiMail className="tab-icon" />
-              <span>Correo</span>
-            </button>
-            <button
-              className={`tab-button ${activeTab === 'external' ? 'active' : ''}`}
-              onClick={() => setActiveTab('external')}
-              aria-selected={activeTab === 'external'}
-              aria-controls="external-tabpanel"
-              id="external-tab"
-              role="tab"
-            >
-              <FiGlobe className="tab-icon" />
-              <span>Servicios</span>
-            </button>
-          </div>
-        </div>
-
-        <div className="settings-content">{renderTabContent()}</div>
+        <SettingsTabs
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          tabContentProps={tabContentProps}
+        />
 
         <div className="settings-footer">
           <button
