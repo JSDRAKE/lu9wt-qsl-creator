@@ -1,0 +1,190 @@
+/* BaseTab.css - Common styles for all tab components */
+
+/* Base tab container */
+.tab-container {
+  padding: 1.5rem;
+  height: 100%;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
+.tab-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.tab-container::-webkit-scrollbar-track {
+  background: var(--scrollbar-track, rgba(30, 58, 76, 0.3));
+  border-radius: 3px;
+}
+
+.tab-container::-webkit-scrollbar-thumb {
+  background-color: var(--scrollbar-thumb, #3b82f6);
+  border-radius: 3px;
+}
+
+/* Common form elements */
+.tab-container .form-group {
+  margin-bottom: 1.5rem;
+  position: relative;
+}
+
+.tab-container label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--text-secondary);
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-weight: normal;
+  line-height: 1.2;
+}
+
+/* Input fields */
+.tab-container .form-input,
+.tab-container .form-select,
+.tab-container .form-textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background-color: var(--input-bg, rgba(30, 58, 76, 0.6));
+  border: 1px solid var(--form-border, #1e3a4c);
+  border-radius: 6px;
+  color: var(--text-primary, #e0e0e0);
+  font-family: 'Courier New', monospace;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.tab-container .form-input:focus,
+.tab-container .form-select:focus,
+.tab-container .form-textarea:focus {
+  outline: none;
+  border-color: var(--primary-color, #3b82f6);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+  background-color: rgba(59, 130, 246, 0.1);
+}
+
+/* Select specific styles */
+.tab-container .form-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238fbcbb' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 1rem;
+  padding-right: 2.5rem;
+}
+
+/* Card/Section styling */
+.tab-section {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: var(--card-bg, rgba(30, 58, 76, 0.3));
+  border: 1px solid var(--card-border, rgba(30, 58, 76, 0.5));
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.tab-section h3 {
+  margin-top: 0;
+  margin-bottom: 1.25rem;
+  font-size: 1.1rem;
+  color: #fff;
+  font-family: 'Courier New', monospace;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  position: relative;
+  padding-bottom: 0.5rem;
+}
+
+.tab-section h3::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 60px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--primary-color, #3b82f6), transparent);
+}
+
+/* Button styles */
+.tab-container .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  border-radius: 6px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+  min-width: 120px;
+  text-align: center;
+}
+
+.tab-container .btn-primary {
+  background-color: var(--btn-primary, #3a7ca5);
+  color: white;
+}
+
+.tab-container .btn-primary:hover {
+  background-color: var(--btn-primary-hover, #4d9acc);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(58, 124, 165, 0.3);
+}
+
+/* Status indicators */
+.status-message {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  margin: 1rem 0;
+  font-weight: 500;
+}
+
+.status-success {
+  background-color: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  color: #10b981;
+}
+
+.status-warning {
+  background-color: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+  color: #f59e0b;
+}
+
+.status-error {
+  background-color: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+}
+
+.status-icon {
+  margin-right: 0.75rem;
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .tab-container {
+    padding: 1rem;
+  }
+  
+  .tab-section {
+    padding: 1.25rem;
+  }
+  
+  .tab-container .btn {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+}
