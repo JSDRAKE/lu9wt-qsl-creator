@@ -1,62 +1,72 @@
 import PropTypes from 'prop-types'
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { FiAlertCircle, FiCheckCircle, FiLoader, FiMail, FiXCircle } from 'react-icons/fi'
+import authService from '../../services/authService'
 import '../../styles/components/tabs/email-tab.css'
+import GoogleAuthButton from '../auth/GoogleAuthButton'
 
 const EmailTab = ({ settings, onSettingsChange }) => {
+  // eslint-disable-next-line no-unused-vars
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState(null)
+  // eslint-disable-next-line no-unused-vars
+  const [userProfile, setUserProfile] = useState(null)
 
-  // Validate email format
+  useEffect(() => {
+    if (authService.isAuthenticated()) {
+      const profile = authService.getProfile()
+      setUserProfile(profile)
+
+      if (profile && profile.email) {
+        onSettingsChange({
+          email: profile.email,
+          emailVerified: true,
+          lastVerified: new Date().toISOString()
+        })
+      }
+    }
+  }, [onSettingsChange])
+
+  // eslint-disable-next-line no-unused-vars
   const isValidEmail = (email) => {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     return re.test(String(email).toLowerCase())
   }
 
-  // Handle email authentication
-  const handleEmailAuth = useCallback(async () => {
-    if (!settings.email) {
-      setError('Por favor, configura tu dirección de correo electrónico primero')
-      return
-    }
+  // Manejador de éxito de autenticación con Google
+  const handleGoogleAuthSuccess = useCallback(
+    (userData) => {
+      setUserProfile(userData)
+      setError(null)
 
-    if (!isValidEmail(settings.email)) {
-      setError('Por favor, ingresa una dirección de correo electrónico válida')
-      return
-    }
-
-    setError(null)
-    setIsLoading(true)
-
-    try {
-      // Simulate authentication (replace with actual OAuth2 flow)
-      await new Promise((resolve, reject) => {
-        setTimeout(() => {
-          // Simulate 10% chance of failure for demo purposes
-          if (Math.random() < 0.1) {
-            reject(new Error('Error de conexión con el servidor de autenticación'))
-          } else {
-            resolve()
-          }
-        }, 1500)
-      })
-
+      // Actualizar el estado del componente padre
       onSettingsChange({
+        email: userData.email,
         emailVerified: true,
         lastVerified: new Date().toISOString()
       })
-    } catch (err) {
-      console.error('Authentication failed:', err)
-      setError(err.message || 'Error al conectar con el servicio de autenticación')
-    } finally {
-      setIsLoading(false)
-    }
-  }, [onSettingsChange, settings.email])
+    },
+    [onSettingsChange]
+  )
+
+  // Manejador de errores de autenticación con Google
+  const handleGoogleAuthError = useCallback((error) => {
+    console.error('Google authentication error:', error)
+    setError(error.message || 'Error al autenticar con Google')
+  }, [])
 
   const handleDisconnect = useCallback(() => {
+    // Cerrar sesión en el servicio de autenticación
+    authService.logout()
+
+    // Limpiar el estado local
+    setUserProfile(null)
+
+    // Actualizar el estado del componente padre
     onSettingsChange({
+      email: settings.email,
       emailVerified: false,
-      email: settings.email // Keep the email but mark as unverified
+      lastVerified: null
     })
   }, [onSettingsChange, settings.email])
 
@@ -83,7 +93,8 @@ const EmailTab = ({ settings, onSettingsChange }) => {
                     </span>
                     {settings.lastVerified && (
                       <span className="status-timestamp">
-                        Verificado el: {new Date(settings.lastVerified).toLocaleString('es-AR', {
+                        Verificado el:{' '}
+                        {new Date(settings.lastVerified).toLocaleString('es-AR', {
                           year: 'numeric',
                           month: '2-digit',
                           day: '2-digit',
@@ -115,21 +126,19 @@ const EmailTab = ({ settings, onSettingsChange }) => {
 
             <div className="email-auth-actions">
               {!settings.emailVerified && (
-                <button
-                  type="button"
-                  className="btn btn-primary"
-                  onClick={handleEmailAuth}
-                  disabled={isLoading || !settings.email}
-                >
-                  {isLoading ? (
-                    <>
+                <div className="google-auth-container">
+                  <GoogleAuthButton
+                    onSuccess={handleGoogleAuthSuccess}
+                    onError={handleGoogleAuthError}
+                    disabled={isLoading}
+                  />
+                  {isLoading && (
+                    <div className="loading-overlay">
                       <FiLoader className="spin" />
-                      <span>Conectando...</span>
-                    </>
-                  ) : (
-                    'Conectar con Google'
+                      <span>Conectando con Google...</span>
+                    </div>
                   )}
-                </button>
+                </div>
               )}
 
               {settings.emailVerified && (
