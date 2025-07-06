@@ -2,8 +2,11 @@ import PropTypes from 'prop-types'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 // IPC is now handled through the preload script
 import {
+  FiAlertCircle,
+  FiCheckCircle,
   FiEdit,
   FiGlobe,
+  FiMail,
   FiRotateCw,
   FiSave,
   FiSettings,
@@ -35,6 +38,8 @@ const SettingsDialog = ({ isOpen, onClose }) => {
     city: '',
     gridLocator: '',
     email: '',
+    // Email authentication
+    emailVerified: false,
     // External services
     qrzUsername: '',
     qrzPassword: '',
@@ -167,6 +172,19 @@ const SettingsDialog = ({ isOpen, onClose }) => {
   //     (profile) => profile.id === settings.activeProfileId
   //   ) || {}
   // }, [settings.activeProfileId, settings.profiles])
+
+  // Handle email authentication
+  const handleEmailAuth = useCallback(async () => {
+    // TODO: Implement OAuth2 authentication
+    // This will be connected to the actual OAuth2 flow later
+    try {
+      // Simulate authentication
+      await new Promise((resolve) => setTimeout(resolve, 1000))
+      await updateSettings({ emailVerified: true })
+    } catch (error) {
+      console.error('Authentication failed:', error)
+    }
+  }, [updateSettings])
 
   // Handle input changes for both direct field updates and form elements
   const handleInputChange = useCallback(
@@ -601,6 +619,67 @@ const SettingsDialog = ({ isOpen, onClose }) => {
           </div>
         )
 
+      case 'email':
+        return (
+          <div className="tab-content" id="email-tabpanel">
+            <div className="email-auth-container">
+              <h3>Autenticación de Correo Electrónico</h3>
+              <p className="email-auth-description">
+                Conecta tu cuenta de correo electrónico para habilitar el envío de QSLs por email.
+                Utilizamos OAuth2 para una conexión segura.
+              </p>
+
+              <div className="email-status">
+                {settings.emailVerified ? (
+                  <div className="status-verified">
+                    <FiCheckCircle className="status-icon" />
+                    <span>Correo verificado: {settings.email || 'No configurado'}</span>
+                  </div>
+                ) : (
+                  <div className="status-not-verified">
+                    <FiAlertCircle className="status-icon" />
+                    <span>No verificado</span>
+                  </div>
+                )}
+              </div>
+
+              <div className="email-auth-actions">
+                <button
+                  type="button"
+                  className={`btn ${settings.emailVerified ? 'btn-secondary' : 'btn-primary'}`}
+                  onClick={handleEmailAuth}
+                  disabled={!settings.email}
+                >
+                  {settings.emailVerified ? 'Cambiar cuenta' : 'Conectar con Google'}
+                </button>
+
+                {settings.emailVerified && (
+                  <button
+                    type="button"
+                    className="btn btn-danger"
+                    onClick={() =>
+                      setSettings((prev) => ({
+                        ...prev,
+                        emailVerified: false
+                      }))
+                    }
+                    style={{ marginLeft: '10px' }}
+                  >
+                    Desconectar
+                  </button>
+                )}
+              </div>
+
+              {!settings.email && (
+                <p className="email-auth-hint">
+                  Por favor, configura tu dirección de correo electrónico en la pestaña de Usuario
+                  primero.
+                </p>
+              )}
+            </div>
+          </div>
+        )
+
       case 'external':
         return (
           <div className="tab-content" id="external-tabpanel">
@@ -710,6 +789,17 @@ const SettingsDialog = ({ isOpen, onClose }) => {
               <span>Usuario</span>
             </button>
 
+            <button
+              className={`tab-button ${activeTab === 'email' ? 'active' : ''}`}
+              onClick={() => setActiveTab('email')}
+              aria-selected={activeTab === 'email'}
+              aria-controls="email-tabpanel"
+              id="email-tab"
+              role="tab"
+            >
+              <FiMail className="tab-icon" />
+              <span>Correo</span>
+            </button>
             <button
               className={`tab-button ${activeTab === 'external' ? 'active' : ''}`}
               onClick={() => setActiveTab('external')}
