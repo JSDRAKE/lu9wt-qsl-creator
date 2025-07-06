@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types'
 import { useEffect, useState } from 'react'
+import '../../styles/components/tabs/general-tab.css'
 
 const GeneralTab = ({ settings, onSettingsChange }) => {
   const [localSettings, setLocalSettings] = useState({
@@ -22,7 +23,7 @@ const GeneralTab = ({ settings, onSettingsChange }) => {
     onSettingsChange(updated)
   }
   return (
-    <div className="tab-content" id="general-tabpanel">
+    <div className="tab-content general-tab" id="general-tabpanel">
       <div className="form-group">
         <label htmlFor="theme">Tema</label>
         <select
