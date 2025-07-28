@@ -30,6 +30,7 @@
     "electron-store": "^10.1.0",
     "electron-updater": "^6.3.9",
     "fast-xml-parser": "^5.2.5",
+    "googleapis": "^154.0.0",
     "html-to-image": "^1.11.13",
     "nodemailer": "^7.0.3",
     "prop-types": "^15.8.1",
